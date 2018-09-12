@@ -1,6 +1,6 @@
 # SafeT-Rex
 This is our autonomous car project at AXA Switzerland Hackathon in Sept 2018.
-9 crazy guys (2 [AXA Sure](http://axa.ch/sure) guys, a [CarCrash](https://blog.axa.ch/kompetenz/axa-crashtests-2018-zu-drohnen-e-bikes-und-car-sharing/) prevention guy, a [3D-printer](https://www.3dhubs.com/service/171073) guy, a strategy guy, an architect, a bee keeper, a hardware tinker and a junior :-) will try to build their own autonomous RC car during the 2 days hackathon.
+9 crazy guys (2 [AXA Sure](http://axa.ch/sure) guys, a [CarCrash](https://blog.axa.ch/kompetenz/axa-crashtests-2018-zu-drohnen-e-bikes-und-car-sharing/) prevention guy, a [3D-printer](https://www.3dhubs.com/service/171073) guy, a strategy guy, an architect, a bee keeper, a hardware+software tinker and a junior :-) will try to build their own autonomous RC car during the 2 days hackathon.
 
 We have lots of experience in totally 31 Hackathons :-)
 
