@@ -1,6 +1,8 @@
 # SafeT-Rex
 This is our autonomous car project at AXA Switzerland Hackathon in Sept 2018.
-9 crazy guys (2 AXA Sure guys, a CarCrash prevention guy, a 3D-printer guy, a strategy guy, an architect, a bee keeper, a hardware tinker and a junior :-) will try to build their own autonomous RC car during the 2 days hackathon.
+9 crazy guys (2 [AXA Sure](http://axa.ch/sure) guys, a [CarCrash](https://blog.axa.ch/kompetenz/axa-crashtests-2018-zu-drohnen-e-bikes-und-car-sharing/) prevention guy, a [3D-printer](https://www.3dhubs.com/service/171073) guy, a strategy guy, an architect, a bee keeper, a hardware tinker and a junior :-) will try to build their own autonomous RC car during the 2 days hackathon.
+
+We have lots of experience at in total 31 Hackathons :-)
 
 context: we are in 2030 and autonomous vehicles are reality. We as AXA would like to show today how this is working. Important for 2030's autonomous cars are the the newest prevention methods to reduce crashs. In 2030 we are not sure what animals still exist and which are new. Be prepared - Grrrrr.
 
