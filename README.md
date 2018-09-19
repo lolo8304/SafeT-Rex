@@ -29,5 +29,28 @@ Open CV
 - ...
 
 
+#Computer
+- we all use our private laptops (windows or mac)
+- wifi router: Lolo
+
 #Preparation by team
-- 
+- Auto: Bernhard, Stefan, Lolo
+- Pi3: Cris, Baxter, Lolo
+- PiCam: Lolo, Baxter
+- Linefollower: Bernhard
+- Ultraschall, Lötkolben, Zinn, Krimpen: Salvador
+- Linoleum oder anderes, dunkel: Cris
+- Klebeband, PanzerTape: schwarz, gelb: Stefan
+- Heissleim: Lolo
+- Akku: Stefan
+- Karton: Lolo
+- Powerbank, kleine für Auto / Raspi: alle
+- Kabelbinder: Stefan
+- Kupferdraht: Stefan
+- 3D-Drucker: Salvador
+- 3 Schilder drucken basierend auf Auto Grösse: Salvador
+- iPhone6 alt: Lolo
+- Flipchart: AXA
+- AppleTV: Lolo
+
+
