@@ -29,11 +29,11 @@ Open CV
 - ...
 
 
-#Computer
+# Computer
 - we all use our private laptops (windows or mac)
 - wifi router: Lolo
 
-#Preparation by team
+# Preparation by team
 - Auto: Bernhard, Stefan, Lolo
 - Pi3: Cris, Baxter, Lolo
 - PiCam: Lolo, Baxter
