@@ -24,7 +24,8 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 
 # Links to technologies to be used / shared
 
-- install python. tensorflow. jupyter notebooks
+- install python. tensorflow. jupyter notebooks (video: https://youtu.be/RUs_qR1hKds)
+
 
 
 - https://github.com/ramitix/self-driving-car/blob/master/README.md - full self driving demos step by step
