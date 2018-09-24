@@ -26,8 +26,11 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 
 - install python. tensorflow. jupyter notebooks (video: https://youtu.be/RUs_qR1hKds)
 
-
 - build an image classifier with tensorflow in 10‘ (video: https://youtu.be/QfNvhPx5Px8)
+
+- pi tensorflow object detection (video: https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi/blob/master/README.md)
+
+
 
 - https://github.com/ramitix/self-driving-car/blob/master/README.md - full self driving demos step by step
 - https://pjreddie.com/darknet/yolo/ (video: https://youtu.be/Cgxsv1riJhI) - You only look once - cool and fast
