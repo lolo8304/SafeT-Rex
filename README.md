@@ -23,6 +23,10 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 
 
 # Links to technologies to be used / shared
+
+- install python. tensorflow. jupyter notebooks
+
+
 - https://github.com/ramitix/self-driving-car/blob/master/README.md - full self driving demos step by step
 - https://pjreddie.com/darknet/yolo/ (video: https://youtu.be/Cgxsv1riJhI) - You only look once - cool and fast
 - https://youtu.be/Rgpfk6eYxJA (How To Train an Object Detection Classifier Using TensorFlow 1.5)
