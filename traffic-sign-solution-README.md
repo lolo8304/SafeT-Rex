@@ -5,7 +5,7 @@
 - update bing search key
 
 ## download dataset
-- download from !(dropbox: https://www.dropbox.com/s/7az1wmet7u9gfq4/dataset.zip?dl=0)
+- download from [dropbox](https://www.dropbox.com/s/7az1wmet7u9gfq4/dataset.zip?dl=0)
 
 
 ## precondition for traffic signs classification
