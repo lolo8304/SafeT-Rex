@@ -26,6 +26,7 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 - https://github.com/ramitix/self-driving-car/blob/master/README.md - full self driving demos step by step
 - https://pjreddie.com/darknet/yolo/ (video: https://youtu.be/Cgxsv1riJhI) - You only look once - cool and fast
 - https://youtu.be/Rgpfk6eYxJA (How To Train an Object Detection Classifier Using TensorFlow 1.5)
+- https://www.pyimagesearch.com/2018/04/09/how-to-quickly-build-a-deep-learning-image-dataset/ - how to build image data set fast using bing search
 
 Open CV
 - debugging: https://www.pyimagesearch.com/2014/12/22/visual-logging-new-favorite-tool-debugging-opencv-python-apps/
@@ -59,3 +60,12 @@ Open CV
 
 ![preparations](/hardware-car.jpg)
 
+# Solution
+
+## hardward
+
+
+
+## traffic signs or others
+
+!(readme: traffic-sign-solution-README.md) - version Lolo / not finished
