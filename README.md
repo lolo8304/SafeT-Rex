@@ -77,4 +77,4 @@ Open CV
 
 ## traffic signs or others
 
-!(readme: traffic-sign-solution-README.md) - version Lolo / not finished
+- [readme](/traffic-sign-solution-README.md) - version Lolo / not finished
