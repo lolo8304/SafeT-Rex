@@ -8,6 +8,6 @@ args = vars(ap.parse_args())
 
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
-    camera.start_recording('my_video.mjpeg')
+    camera.start_recording('my_video.h264')
     camera.wait_recording(args["len"])
     camera.stop_recording()
