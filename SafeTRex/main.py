@@ -37,7 +37,7 @@ class StreamReader:
         self.__cam.resolution = (320, 240)
         self.__cam.framerate = 16
         time.sleep(0.1)
-        with self.__cam.array.PiRGBArray(self.__cam) as stream:
+        with PiRGBArray(self.__cam) as stream:
             self.__cam.capture( 'bgr', use_video_port=True)
         # stream.array now contains the image data in BGR order
         self.currentimage = stream.array
