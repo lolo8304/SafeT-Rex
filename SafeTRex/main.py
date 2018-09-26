@@ -10,6 +10,8 @@ fast = 50
 left = -30
 right = 30
 
+debug = True #using GUI
+
 
 class CarHandler:
     def __init__(self):
@@ -22,10 +24,11 @@ class CarHandler:
 
         sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
         lanes = None
-
-        print("Starting SingDetection Thread...")
+        if debug :
+            print("Starting SingDetection Thread...")
         sign.start()
-        print("Starting StreamReader...")
+        if debug :
+            print("Starting StreamReader...")
         sr.run()
 
 
@@ -41,6 +44,7 @@ class StreamReader:
 
         self.rawCapture = PiRGBArray(self.__cam, size=(320, 240))
 
+
         #ret, self.currentimage = self.__cam.read()
 
     def run(self):
@@ -50,7 +54,11 @@ class StreamReader:
             # and occupied/unoccupied text
             self.currentimage = frame.array
             self.rawCapture.truncate(0)
+            if debug :
+                # show the frame
+                cv2.imshow("Frame", self.currentimage)
         #while (True):
-            #self.currentimage = self.__cam.read()
+            #self.currentimage 
+            # = self.__cam.read()
 
 
