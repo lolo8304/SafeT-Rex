@@ -37,12 +37,16 @@ class StreamReader:
         self.__cam.resolution = (240, 180)
         self.__cam.framerate = 16
 
-        rawCapture = PiRGBArray(self.__cam, size=(240, 180))
+        self.__rawCapture = PiRGBArray(self.__cam, size=(240, 180))
 
         ret, self.currentimage = self.__cam.read()
 
     def run(self):
-        while (True):
-            self.currentimage = self.__cam.read()
+        for frame in self.__cam.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
+            # grab the raw NumPy array representing the image, then initialize the timestamp
+            # and occupied/unoccupied text
+            self.currentimage = frame.array
+        #while (True):
+            #self.currentimage = self.__cam.read()
 
 
