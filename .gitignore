@@ -116,4 +116,8 @@ traffic-signs-classification/data
 .idea/SafeT-Rex.iml
 .idea/vcs.xml
 .idea/inspectionProfiles/Project_Default.xml
+<<<<<<< HEAD
 >>>>>>> b6329f1b6dbb7ec97539636587bda7d629848f49
+=======
+*.h264
+>>>>>>> f201182a513cdec046edd726b6954fd7de09326f
