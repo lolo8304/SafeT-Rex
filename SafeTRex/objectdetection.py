@@ -59,7 +59,7 @@ class ObjectDetection(object):
             gray_image,
             scaleFactor=1.1,
             minNeighbors=default_threshold,
-            minSize=(10, 10),
+            minSize=(7, 7),
             flags=cv2.CASCADE_SCALE_IMAGE
         )
 

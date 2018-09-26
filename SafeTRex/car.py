@@ -12,10 +12,10 @@ class Servo(object):
             max=tmp
         if min<0: min=0
         if max>180: max=180
-	    #GPIO.setmode(GPIO.BCM)
-	    #GPIO.setup(gpio, GPIO.OUT)
-        #self.io = GPIO.PWM(gpio, 50) # 50 Hz
-        #self.io.start(7.5)
+	    GPIO.setmode(GPIO.BCM)
+	    GPIO.setup(gpio, GPIO.OUT)
+        self.io = GPIO.PWM(gpio, 50) # 50 Hz
+        self.io.start(7.5)
         self.min=min
         self.max=max
 
@@ -26,14 +26,13 @@ class Servo(object):
     def go(self,angle):
         if angle<self.min: angle=self.min
         elif angle>self.max: angle=self.max
-        #self.io.ChangeDutyCycle(float(angle)/18+2.5)
+        self.io.ChangeDutyCycle(float(angle)/18+2.5)
         time.sleep(0.2)
         print('Servo angle '+str(angle))
 
     def close(self):
-        pass
-        #self.io.stop()
-        #GPIO.cleanup()
+        self.io.stop()
+        GPIO.cleanup()
 
 
 class ServoCar(object):
@@ -54,6 +53,28 @@ class ServoCar(object):
 
     def speed(self, value):
         self.__speed.go(90+self.__speedFactor*float(value))
+
+
+class CarStateMachine():
+    def __init__(self, car):
+        self.__state = ("RUN", 30)
+        self._setRUN(30)
+        self._car = car
+
+    def setState(self, state, tempo = -1):
+        #RUN
+        if state == "RUN":
+            self._setRUN(tempo)
+
+    def setRUN(self, tempo):
+        if (tempo == -1):
+            tempo = self.__state[1]
+        self._car.speed(tempo)
+        self.__state = ("RUN", tempo)
+
+    def setSTOP(self):
+        self._car.speed(0)
+        self.__state = ("STOP", 0)
 
 
 
