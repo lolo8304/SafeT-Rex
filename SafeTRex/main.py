@@ -14,7 +14,7 @@ right = 30
 
 class CarHandler:
     def __init__(self, args):
-        self.__debug = args["debug"]
+        self.__args = args
         self.__driver = CarStateMachine()
 
     def start(self):
