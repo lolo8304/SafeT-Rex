@@ -104,3 +104,7 @@ venv.bak/
 .mypy_cache/
 config.ini
 traffic-signs-classification/data
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
