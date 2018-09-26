@@ -40,7 +40,6 @@ class StreamReader:
         self.__rawCapture = PiRGBArray(self.__cam, size=(240, 180))
 
         #ret, self.currentimage = self.__cam.read()
-        self.currentimage = self.__cam.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True)[0].array
 
     def run(self):
         for frame in self.__cam.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
