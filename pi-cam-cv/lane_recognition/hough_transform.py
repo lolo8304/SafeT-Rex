@@ -13,7 +13,7 @@ from Line import Line
 # GPIO.setup(8, GPIO.OUT)
 theta=0
 #camera = cv2.VideoCapture("data/test_videos/lane1.h264")
-camera = cv2.VideoCapture("data/test_videos/test2.h264")
+camera = cv2.VideoCapture("data/test_videos/test3.h264")
 
 #camera = PiCamera()
 #camera.resolution = (320, 240)
@@ -81,12 +81,19 @@ def compute_lane_from_candidates(line_candidates, img_shape):
 
     return left_lane, right_lane
 
-def get_lane_lines(color_image, solid_lines=True):
+def isRationalNumber(f):
+    return -1000.0 < f < 1000.0
+
+def isRationalLine(line):
+    return isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
+
+def get_lane_lines(color_image):
     # grab the dimensions of the image and calculate the center
     # of the image
     (h, w) = image.shape[:2]
-    h = int(h / 2)
-    h3 = int(h / 2)
+    #h = int(h / 2)
+    #h3 = int(h / 2)
+    h3 = 0
     crop_img = image[h3: h3 + h, 0:w]
 
     gray = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
@@ -105,61 +112,130 @@ def get_lane_lines(color_image, solid_lines=True):
     lines = hough_lines_detection(img=edged,
                                 rho=10,
                                 theta=np.pi / 180,
-                                threshold=2,
-                                min_line_len=15,
+                                threshold=1,
+                                min_line_len=25,
                                 max_line_gap=1)
-    print(lines)
+    #print(lines)
 
     if(lines is not None and lines.any() != None):
         # convert (x1, y1, x2, y2) tuples into Lines
         detected_lines = [Line(l[0][0], l[0][1], l[0][2], l[0][3]) for l in lines]
 
         # if 'solid_lines' infer the two lane lines
-        if solid_lines:
-            candidate_lines = []
-            for line in detected_lines:
-                    # consider only lines with slope between 30 and 60 degrees
-                    if 0.5 <= np.abs(line.slope) <= 2:
-                        candidate_lines.append(line)
-            # interpolate lines candidates to find both lanes
-            lane_lines = compute_lane_from_candidates(candidate_lines, gray.shape)
-        else:
-            # if not solid_lines, just return the hough transform output
-            lane_lines = detected_lines
-        return crop_img, gray, blurred, edged, lane_lines
+        candidate_lines = []
+        for line in detected_lines:
+                # consider only lines with slope between 30 and 60 degrees
+                if 0.5 <= np.abs(line.slope) <= 2:
+                    candidate_lines.append(line)
+        # interpolate lines candidates to find both lanes
+        left, right = compute_lane_from_candidates(candidate_lines, gray.shape)
+        return crop_img, gray, blurred, edged, left, right
     else:
-        return crop_img, gray, blurred, edged, []
+        return crop_img, gray, blurred, edged, None, None
+
+
+def line_intersection2(line1, line2):
+    if (line1 is not None and line2 is not None):
+        return line_intersection( ( (line1.x1, line1.y1), (line1.x2, line1.y2)), ((line2.x1, line2.y1), (line2.x2, line2.y2)) )
+    else:
+        return False, None
+
+
+#Finds the intersection of two lines, or returns false.
+#The lines are defined by (o1, p1) and (o2, p2).
+
+def det(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]) #Typo was here
+
+
+    div = det(xdiff, ydiff)
+    if div == 0:
+       return False, None
+
+    d = (det(*line1), det(*line2))
+    x = det(d, xdiff) / div
+    y = det(d, ydiff) / div
+    return True, (x, y)
+
+def drawLine(line):
+    #print("(x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
+    if isRationalLine(line):
+        cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),(0,255,0),10)
+        #theta=theta+math.atan2((line.y2-line.y1),(line.x2-line.x1))
+        #print("theta ", theta)
+        # threshold = 6
+        # if (theta>threshold):
+        #     print ("turn left")
+        # if(theta < -threshold):
+        #     print("right")
+        # if(abs(theta) < threshold):
+        #     print ("straight")
+        #     theta=0
+
+# from -1.0 via 0 to 1.0 (left to right)
+def steering_directionX(intersection_point, image, defaultW):
+    x = intersection_point[0]
+    h = 0
+    w = defaultW
+    if (image is not None):
+        (h, w) = image.shape[:2]
+    w2 = w / 2
+    directionX = (x - w2) / w2
+    if (directionX < 0):
+        directionX = max(-1.0, directionX)
+    else:
+        directionX = min(1.0, directionX)
+    return directionX
+
+testL = Line(0, 360, 240, 0)
+testR = Line(480, 360, 240, 0)
+crossed, point = line_intersection2(testL, testR)
+print ("test intersection ", point)
+
+testL = Line(0, 360, 240, 0)
+testR = Line(480, 360, 480, 0)
+crossed, point = line_intersection2(testL, testR)
+print ("test intersection ", point)
+
+p = (240, 0)
+testDirectionX = steering_directionX(p, None, 480)
+print ("test direct for ", p, " is ", testDirectionX)
+
+p = (-2147483600.0, -1994294800.0)
+testDirectionX = steering_directionX(p, None, 480)
+print ("test direct for ", p, " is ", testDirectionX)
+
+p = (480, 0)
+testDirectionX = steering_directionX(p, None, 480)
+print ("test direct for ", p, " is ", testDirectionX)
+
 
 #for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 while(True):
-
+    time.sleep(0.01)
     #image = frame.array
     ret, image = camera.read()
-    crop_img, gray, blurred, edged, lines = get_lane_lines(image, solid_lines=True)
+    crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
    #lines = cv2.HoughLinesP(edged,1,np.pi/180,10,minLineLength,maxLineGap)
 
-    #for x in range(0, len(lines)):
-    print ("lines = ",lines)
-    for line in lines:
-            cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),(0,255,0),10)
-            theta=theta+math.atan2((line.y2-line.y1),(line.x2-line.x1))
-            #print("theta ", theta)
-            # threshold = 6
-            # if (theta>threshold):
-            #     print ("turn left")
-            # if(theta < -threshold):
-            #     print("right")
-            # if(abs(theta) < threshold):
-            #     print ("straight")
-            #     theta=0
-            show_thumb("crop",crop_img, 0, 0)
-            show_thumb("edge",edged, 2, 0)
-            show_thumb("gray",gray, 4, 0)
-            show_thumb("blurred",blurred, 0, 2)
+    crossed, point = line_intersection2(left, right)
+    if (crossed):
+        drawLine(left)
+        drawLine(right)
+        print("crossed x=", point[0], " y=", point[1])
 
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
+    show_thumb("crop",crop_img, 0, 0)
+    show_thumb("edge",edged, 2, 0)
+    show_thumb("gray",gray, 4, 0)
+    show_thumb("blurred",blurred, 0, 2)
+
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
 
 
 

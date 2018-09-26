@@ -92,7 +92,7 @@ def get_lane_lines(color_image, solid_lines=True):
     :return: list of (candidate) lane lines.
     """
     # resize to 960 x 540
-    color_image = cv2.resize(color_image, (960, 540))
+    #color_image = cv2.resize(color_image, (960, 540))
 
     # convert to grayscale
     img_gray = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
@@ -105,11 +105,11 @@ def get_lane_lines(color_image, solid_lines=True):
 
     # perform hough transform
     detected_lines = hough_lines_detection(img=img_edge,
-                                           rho=2,
+                                           rho=10,
                                            theta=np.pi / 180,
                                            threshold=1,
-                                           min_line_len=15,
-                                           max_line_gap=5)
+                                           min_line_len=25,
+                                           max_line_gap=1)
 
     # convert (x1, y1, x2, y2) tuples into Lines
     detected_lines = [Line(l[0][0], l[0][1], l[0][2], l[0][3]) for l in detected_lines]
