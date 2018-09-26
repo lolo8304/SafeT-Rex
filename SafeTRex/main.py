@@ -38,8 +38,6 @@ class StreamReader:
         self.__cam.framerate = 16
         self.__rawCapture = PiRGBArray(self.__cam, size=(320, 240))
 
-        self.__rawCapture = PiRGBArray(self.__cam, size=(240, 180))
-
         #ret, self.currentimage = self.__cam.read()
 
     def run(self):
