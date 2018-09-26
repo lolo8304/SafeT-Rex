@@ -8,7 +8,7 @@ import time
 import math
 import numpy as np
 import cv2
-
+debug = True
 detect_threshold = 8
 
 
