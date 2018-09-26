@@ -67,8 +67,9 @@ class ServoCar(object):
 class CarStateMachine():
     def __init__(self):
         self.__state = ("RUN", 30)
-        self.setRUN(30)
         self._car = ServoCar()
+        self.setRUN(30)
+
 
     def setState(self, state, tempo=-1):
         # RUN
