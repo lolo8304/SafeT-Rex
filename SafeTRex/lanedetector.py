@@ -1,4 +1,4 @@
-from lane_recognition.hough_transform_module import detect_lane
+from .lane_recognition.hough_transform_module import detect_lane
 
 def lanedetector(sr, driver):
     ld = LineDetector(sr, driver)
