@@ -1,6 +1,6 @@
 __author__ = 'jkminder'
 
-from .main import *
+from main import *
 # import the necessary packages
 # from picamera.array import PiRGBArray
 # from picamera import PiCamera
