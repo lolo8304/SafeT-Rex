@@ -10,8 +10,10 @@ class Servo(object):
             tmp=min
             min=max
             max=tmp
-        if min<0: min=0
-        if max>180: max=180
+        if min<0:
+            min=0
+        if max>180:
+            max=180
 	    GPIO.setmode(GPIO.BCM)
 	    GPIO.setup(gpio, GPIO.OUT)
         self.io = GPIO.PWM(gpio, 50) # 50 Hz
