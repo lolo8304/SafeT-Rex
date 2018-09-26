@@ -1,5 +1,6 @@
 from SafeTRex.main import *
 
 print("Hello World")
-CarHandler.Start()
+Handler = CarHandler()
+Handler.start()
 
