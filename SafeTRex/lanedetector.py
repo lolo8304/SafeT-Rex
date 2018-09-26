@@ -2,7 +2,7 @@
 
 def lanedetector(sr, driver):
     ld = LineDetector()
-    LineDetector.run()
+    ld.run()
 
 
 class LineDetector():

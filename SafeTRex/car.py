@@ -83,6 +83,6 @@ class CarStateMachine():
         time.sleep(5)
         self._car.speed(30)
         self.__state = ("RUN", 30)
-        
+
     def setAngle(self, angle):
         self._car.steer(angle)
