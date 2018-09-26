@@ -1,6 +1,8 @@
 from .car import *
 from .objectdetection import signdetection
 import cv2
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import threading
 
 slow = 30
@@ -31,6 +33,12 @@ class CarHandler:
 class StreamReader:
     def __init__(self):
         self.__cam = cv2.VideoCapture(0)
+        self.__cam = PiCamera()
+        self.__cam.resolution = (240, 180)
+        self.__cam.framerate = 16
+
+        rawCapture = PiRGBArray(self.__cam, size=(240, 180))
+
         ret, self.currentimage = self.__cam.read()
 
     def run(self):
