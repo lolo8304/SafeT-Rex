@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 import sys, getopt
 
@@ -17,10 +17,10 @@ class Servo(object):
             max = 180
 
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(gpio, GPIO.OUT)
-        self.io = GPIO.PWM(gpio, 50)  # 50 Hz
-        self.io.start(7.5)
+        #GPIO.setmode(GPIO.BCM)
+        #PIO.setup(gpio, GPIO.OUT)
+        #self.io = GPIO.PWM(gpio, 50)  # 50 Hz
+        #self.io.start(7.5)
         self.min = min
         self.max = max
 
@@ -32,13 +32,14 @@ class Servo(object):
             angle = self.min
         elif angle > self.max:
             angle = self.max
-        self.io.ChangeDutyCycle(float(angle) / 18 + 2.5)
+        #self.io.ChangeDutyCycle(float(angle) / 18 + 2.5)
         time.sleep(0.2)
         print('Servo angle ' + str(angle))
 
     def close(self):
-        self.io.stop()
-        GPIO.cleanup()
+        pass
+        #self.io.stop()
+        #GPIO.cleanup()
 
 
 class ServoCar(object):
@@ -75,7 +76,7 @@ class CarStateMachine():
             self.setRUN(tempo)
 
     def setRUN(self, tempo):
-        if (tempo == -1):
+        if tempo == -1:
             tempo = self.__state[1]
         self._car.speed(tempo)
         self.__state = ("RUN", tempo)
