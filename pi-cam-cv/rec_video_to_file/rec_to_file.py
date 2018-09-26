@@ -13,9 +13,9 @@ args = vars(ap.parse_args())
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
     filename = 'safet-rex.'+args["format"]
-    if (args["ext"] == "") {
+    if args["ext"] == "":
         filename = filename + "." + ext
-    }
+
     print ('recording ',args["len"], 's and save to ',filename)
 
     camera.start_recording(filename)
