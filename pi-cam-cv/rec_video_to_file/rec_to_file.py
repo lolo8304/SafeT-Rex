@@ -12,7 +12,7 @@ args = vars(ap.parse_args())
 
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
-    filename = 'saft-rex.'+args["format"]
+    filename = 'safet-rex.'+args["format"]
     if (args["ext"] == "") {
         filename = filename + "." + ext
     }
