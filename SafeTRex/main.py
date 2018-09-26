@@ -32,10 +32,11 @@ class CarHandler:
 
 class StreamReader:
     def __init__(self):
-        self.__cam = cv2.VideoCapture(0)
+        #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
-        self.__cam.resolution = (240, 180)
+        self.__cam.resolution = (320, 240)
         self.__cam.framerate = 16
+        self.__rawCapture = PiRGBArray(self.__cam, size=(320, 240))
 
         self.__rawCapture = PiRGBArray(self.__cam, size=(240, 180))
 
