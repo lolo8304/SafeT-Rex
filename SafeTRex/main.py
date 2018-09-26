@@ -16,7 +16,7 @@ class CarHandler:
         self.__driver = CarStateMachine()
 
     def start(self):
-        self.__driver.speed(slow)
+        self.__driver.setRUN(30)
         sr = StreamReader()
         time.sleep(0.1)
 
