@@ -168,9 +168,12 @@ class SignDetector():
                 self.d_light = d2
                 self.d_speed = d3
 
-            print("v param 1 |STOPSIGN|=", v_param1, " distance=", d1)
-            print("v param 2 |LIGHTSIGNAL|=", v_param2, " distance=", d2)
-            print("v param 3 |TEMPOLIMIT|=", v_param3, " distance=", d3)
+            if v_param1 > 0:
+                print("v param 1 |STOPSIGN|=", v_param1, " distance=", d1)
+            if v_param2 > 0:
+                print("v param 2 |LIGHTSIGNAL|=", v_param2, " distance=", d2)
+            if v_param3 > 0:
+                print("v param 3 |TEMPOLIMIT|=", v_param3, " distance=", d3)
 
 
 
