@@ -11,7 +11,7 @@ args = vars(ap.parse_args())
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
     filename = 'saft-rex.'+args["format"]
-    print ("recording ",args["len"], "s and save to ",filename)
+    print ('recording ',args["len"], 's and save to ',filename)
 
     camera.start_recording(filename)
     camera.wait_recording(args["len"])
