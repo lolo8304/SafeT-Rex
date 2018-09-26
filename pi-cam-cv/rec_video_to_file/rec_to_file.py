@@ -3,7 +3,7 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-l", "--len", required=True, type=int,
 	help="len of video")
-ap.add_argument("-f", "--format", required=False, type=String, default="h264",
+ap.add_argument("-f", "--format", required=False, default="h264",
 	help="video format")
 args = vars(ap.parse_args())
 
