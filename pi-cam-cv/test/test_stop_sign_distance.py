@@ -31,6 +31,7 @@ class ObjectDetection(object):
         self.red_light = False
         self.green_light = False
         self.yellow_light = False
+        self.id = 0
 
     def detect(self, cascade_classifier, gray_image, image):
 
@@ -90,19 +91,23 @@ class DetectionHandler():
 
     # initialize the camera and grab a reference to the raw camera capture
     camera = PiCamera()
+
     #camera.resolution = (640, 480)
     #camera.framerate = 32
     #rawCapture = PiRGBArray(camera, size=(640, 480))
 
-    camera.resolution = (240, 180)
+    #camera.resolution = (240, 180)
+    #camera.framerate = 16
+    #rawCapture = PiRGBArray(camera, size=(240, 180))
+
+    camera.resolution = (320, 240)
     camera.framerate = 16
-    rawCapture = PiRGBArray(camera, size=(240, 180))
+    rawCapture = PiRGBArray(camera, size=(320, 240))
 
     # allow the camera to warmup
     time.sleep(0.1)
 
     obj_detection = ObjectDetection()
-
 
     # h1: stop sign
     h1 = 15.5 - 10  # cm
@@ -140,11 +145,13 @@ class DetectionHandler():
           self.d_stop_sign = d1
           self.d_light = d2
 
-        print ("v param 1=",v_param1, " distance=",d1)
-        print ("v param 2=",v_param2, " distance=",d2)
+        self.id = self.id + 1
+
+        print ("", self.id, " v param 1=",v_param1, " distance=",d1)
+        print ("", self.id, " v param 2=",v_param2, " distance=",d2)
 
         # show the frame
-        cv2.imshow("Frame", image)
+        #cv2.imshow("Frame", image)
 
         key = cv2.waitKey(1) & 0xFF
       
