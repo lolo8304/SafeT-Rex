@@ -79,7 +79,7 @@ class CarStateMachine():
 
     def setSTOP(self):
         print("STOPSIGN!!!!")
-        if time.time() - self.lastSTOP > 5000:
+        if time.time() - self.lastSTOP > 30:
             self._car.speed(0)
             self.__state = ("STOP", 0)
             print("stoping. . .")
