@@ -36,8 +36,13 @@ class StreamReader:
         self.__cam = PiCamera()
         self.__cam.resolution = (320, 240)
         self.__cam.framerate = 16
-        self.__rawCapture = PiRGBArray(self.__cam, size=(320, 240))
+        time.sleep(0.1)
+        with self.__cam.array.PiRGBArray(self.__cam) as stream:
+            self.__cam.capture( 'bgr', use_video_port=True)
+        # stream.array now contains the image data in BGR order
+        self.currentimage = stream.array
 
+        self.__rawCapture = PiRGBArray(self.__cam, size=(320, 240))
 
         #ret, self.currentimage = self.__cam.read()
 
