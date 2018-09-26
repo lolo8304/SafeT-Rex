@@ -52,19 +52,20 @@ class ServoCar(object):
         self.__steer.go(90+self.__steerFactor*float(value))
 
     def speed(self, value):
+        print("Set Speed to" + value)
         self.__speed.go(90+self.__speedFactor*float(value))
 
 
 class CarStateMachine():
     def __init__(self, car):
         self.__state = ("RUN", 30)
-        self._setRUN(30)
-        self._car = car
+        self.setRUN(30)
+        self._car = ServoCar()
 
     def setState(self, state, tempo = -1):
         #RUN
         if state == "RUN":
-            self._setRUN(tempo)
+            self.setRUN(tempo)
 
     def setRUN(self, tempo):
         if (tempo == -1):

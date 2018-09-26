@@ -153,6 +153,7 @@ class SignDetector():
                     d2 = self.d_to_camera.calculate(v_param2, self.h2, 100, image)
                 if v_param3 > 0:
                     d3 = self.d_to_camera.calculate(v_param3, self.h3, 200, image)
+                    self.__driver.setRUN(50)
                 if v_param4 > 0:
                     d4 = self.d_to_camera.calculate(v_param4, self.h3, 100, image)
                 self.d_stop_sign = d1
