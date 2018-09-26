@@ -19,7 +19,7 @@ class CarHandler:
 
     def start(self):
         self.__driver.setRUN(30)
-        sr = StreamReader(args)
+        sr = StreamReader(self.__args)
         time.sleep(0.1)
 
         sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
