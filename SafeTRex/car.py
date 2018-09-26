@@ -70,12 +70,6 @@ class CarStateMachine():
         self._car = ServoCar()
         self.setRUN(30)
 
-
-    def setState(self, state, tempo=-1):
-        # RUN
-        if state == "RUN":
-            self.setRUN(tempo)
-
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]
@@ -85,3 +79,10 @@ class CarStateMachine():
     def setSTOP(self):
         self._car.speed(0)
         self.__state = ("STOP", 0)
+        print("STOPSIGN!!!!")
+        time.sleep(5)
+        self._car.speed(30)
+        self.__state = ("RUN", 30)
+        
+    def setAngle(self, angle):
+        self._car.steer(angle)

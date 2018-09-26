@@ -1,5 +1,6 @@
 from .car import *
 from .objectdetection import *
+from .lanedetector import *
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -21,12 +22,13 @@ class CarHandler:
         time.sleep(0.1)
 
         sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
-        lanes = None
-        if debug :
-            print("Starting SingDetection Thread...")
+        lanes = threading.Thread(target=lanedetector, args=[sr, self.__driver])
+
+        print("Starting SignDetection Thread...")
         sign.start()
-        if debug :
-            print("Starting StreamReader...")
+        print("Starting LaneDetector Thread...")
+        lanes.start()
+        print("Starting StreamReader...")
         sr.run()
 
 
