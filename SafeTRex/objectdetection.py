@@ -62,42 +62,42 @@ class ObjectDetection(object):
             minSize=(7, 7),
             flags=cv2.CASCADE_SCALE_IMAGE
         )
-
+        if debug :
         # draw a rectangle around the objects
-        for (x_pos, y_pos, width, height) in cascade_obj:
-            cv2.rectangle(image, (x_pos + 5, y_pos + 5), (x_pos + width - 5, y_pos + height - 5), (255, 255, 255), 2)
-            v = y_pos + height - 5
-            # print(x_pos+5, y_pos+5, x_pos+width-5, y_pos+height-5, width, height)
+            for (x_pos, y_pos, width, height) in cascade_obj:
+                cv2.rectangle(image, (x_pos + 5, y_pos + 5), (x_pos + width - 5, y_pos + height - 5), (255, 255, 255), 2)
+                v = y_pos + height - 5
+                # print(x_pos+5, y_pos+5, x_pos+width-5, y_pos+height-5, width, height)
 
-            # stop sign
-            if 0.85 < width / height < 1.15 or force_rect:
-                cv2.putText(image, text, (x_pos, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                # stop sign
+                if 0.85 < width / height < 1.15 or force_rect:
+                    cv2.putText(image, text, (x_pos, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-            # traffic lights
-            else:
-                roi = gray_image[y_pos + 10:y_pos + height - 10, x_pos + 10:x_pos + width - 10]
-                mask = cv2.GaussianBlur(roi, (25, 25), 0)
-                (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(mask)
+                # traffic lights
+                else:
+                    roi = gray_image[y_pos + 10:y_pos + height - 10, x_pos + 10:x_pos + width - 10]
+                    mask = cv2.GaussianBlur(roi, (25, 25), 0)
+                    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(mask)
 
-                # check if light is on
-                if maxVal - minVal > threshold:
-                    cv2.circle(roi, maxLoc, 5, (255, 0, 0), 2)
+                    # check if light is on
+                    if maxVal - minVal > threshold:
+                        cv2.circle(roi, maxLoc, 5, (255, 0, 0), 2)
 
-                    # Red light
-                    if 1.0 / 8 * (height - 30) < maxLoc[1] < 4.0 / 8 * (height - 30):
-                        cv2.putText(image, 'Red', (x_pos + 5, y_pos - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                        self.red_light = True
+                        # Red light
+                        if 1.0 / 8 * (height - 30) < maxLoc[1] < 4.0 / 8 * (height - 30):
+                            cv2.putText(image, 'Red', (x_pos + 5, y_pos - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                            self.red_light = True
 
-                    # Green light
-                    elif 5.5 / 8 * (height - 30) < maxLoc[1] < height - 30:
-                        cv2.putText(image, 'Green', (x_pos + 5, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
-                                    2)
-                        self.green_light = True
+                        # Green light
+                        elif 5.5 / 8 * (height - 30) < maxLoc[1] < height - 30:
+                            cv2.putText(image, 'Green', (x_pos + 5, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
+                                        2)
+                            self.green_light = True
 
-                    # yellow light
-                    # elif 4.0/8*(height-30) < maxLoc[1] < 5.5/8*(height-30):
-                    #    cv2.putText(image, 'Yellow', (x_pos+5, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
-                    #    self.yellow_light = True
+                        # yellow light
+                        # elif 4.0/8*(height-30) < maxLoc[1] < 5.5/8*(height-30):
+                        #    cv2.putText(image, 'Yellow', (x_pos+5, y_pos - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+                        #    self.yellow_light = True
         return v
 
 
@@ -163,8 +163,7 @@ class SignDetector():
             print("v param 2 |LIGHTSIGNAL|=", v_param2, " distance=", d2)
             print("v param 3 |TEMPOLIMIT|=", v_param3, " distance=", d3)
 
-            # show the frame
-            cv2.imshow("Frame", image)
+
 
             key = cv2.waitKey(1) & 0xFF
 
