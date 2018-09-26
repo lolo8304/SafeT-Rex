@@ -6,7 +6,7 @@ from picamera import PiCamera
 import threading
 import argparse
 ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--debug", required=False, default="" help="debug mode only if using a GUI")
+ap.add_argument("-d", "--debug", required=False, default="", help="debug mode only if using a GUI")
 debug = parser.parse_args(['-d'])
 
 slow = 30
