@@ -1,5 +1,5 @@
-from .car import *
-from .objectdetection import signdetection
+from car import *
+from objectdetection import signdetection
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
