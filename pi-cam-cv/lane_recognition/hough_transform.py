@@ -13,7 +13,7 @@ from Line import Line
 # GPIO.setup(8, GPIO.OUT)
 theta=0
 #camera = cv2.VideoCapture("data/test_videos/lane1.h264")
-camera = cv2.VideoCapture("data/test_videos/test3.h264")
+camera = cv2.VideoCapture("data/test_videos/test4.h264")
 
 #camera = PiCamera()
 #camera.resolution = (320, 240)
@@ -177,7 +177,7 @@ def drawLine(line):
         #     theta=0
 
 # from -1.0 via 0 to 1.0 (left to right)
-def steering_directionX(intersection_point, image, defaultW):
+def steering_directionX(intersection_point, image, defaultW = 0):
     x = intersection_point[0]
     h = 0
     w = defaultW
@@ -190,6 +190,32 @@ def steering_directionX(intersection_point, image, defaultW):
     else:
         directionX = min(1.0, directionX)
     return directionX
+
+# divide by 8 regions each side, first 2 regions each side - straight
+# value between -100 - 100
+def steering_angle(directionX):
+    directionX100 = int(directionX * 100)
+    absStraightDistance = int(100 * 2 / 8)
+    isStraight = abs(directionX100) <= absStraightDistance
+    if isStraight:
+        return "straight", directionX100
+    elif directionX100 < 0:
+        return "left", directionX100
+    else:
+        return "right", directionX100
+
+def calculate_steering_angle(point, crop_img):
+    directionX = steering_directionX( point, crop_img)
+    directionString, angle100 = steering_angle(directionX)
+    print("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
+    if directionString == "straight":
+        cv2.putText(crop_img, directionString, (int(w/2)-30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+    elif directionString == "left":
+        cv2.putText(crop_img, directionString, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+    else:
+        cv2.putText(crop_img, directionString, (w-60, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+    return directionString, angle100
+
 
 testL = Line(0, 360, 240, 0)
 testR = Line(480, 360, 240, 0)
@@ -220,13 +246,28 @@ while(True):
     #image = frame.array
     ret, image = camera.read()
     crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
+    (h, w) = crop_img.shape[:2]
    #lines = cv2.HoughLinesP(edged,1,np.pi/180,10,minLineLength,maxLineGap)
 
-    crossed, point = line_intersection2(left, right)
-    if (crossed):
-        drawLine(left)
-        drawLine(right)
-        print("crossed x=", point[0], " y=", point[1])
+    if (isRationalLine(left) and isRationalLine(right)):
+        crossed, point = line_intersection2(left, right)
+        if (crossed):
+            drawLine(left)
+            drawLine(right)
+            directionString, angle100 = calculate_steering_angle(point, crop_img)
+    elif isRationalLine(left):
+        virtual_horizon = Line(0, 0, w, 0)
+        crossed, point = line_intersection2(left, virtual_horizon)
+        if crossed:
+            drawLine(left)
+            directionString, angle100 = calculate_steering_angle(point, crop_img)
+    elif isRationalLine(right):
+        virtual_horizon = Line(0, 0, w, 0)
+        crossed, point = line_intersection2(right, virtual_horizon)
+        if crossed:
+            drawLine(right)
+            directionString, angle100 = calculate_steering_angle(point, crop_img)
+
 
     show_thumb("crop",crop_img, 0, 0)
     show_thumb("edge",edged, 2, 0)
