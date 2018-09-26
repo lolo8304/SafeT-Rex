@@ -13,12 +13,13 @@ left = -30
 right = 30
 
 class CarHandler:
-    def __init__(self):
+    def __init__(self, args):
+        self.__debug = args["debug"]
         self.__driver = CarStateMachine()
 
     def start(self):
         self.__driver.setRUN(30)
-        sr = StreamReader()
+        sr = StreamReader(args)
         time.sleep(0.1)
 
         sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
@@ -34,7 +35,8 @@ class CarHandler:
 
 
 class StreamReader:
-    def __init__(self):
+    def __init__(self, args):
+        self.__debug = args["debug"]
         #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
         self.__cam.resolution = (320, 240)
@@ -46,6 +48,9 @@ class StreamReader:
 
 
         #ret, self.currentimage = self.__cam.read()
+
+    def isDebug(self):
+        return self.__debug
 
     def run(self):
         time.sleep(1)

@@ -1,4 +1,4 @@
-
+from ../pi-cam-cv/lane_recognition/hough_transform_module import detect_lane
 
 def lanedetector(sr, driver):
     ld = LineDetector(sr, driver)
@@ -14,3 +14,4 @@ class LineDetector():
         image = None
         while(image is None):
             image = self.__sr.currentimage
+            detect_lane(image, self.__sr.isDebug())

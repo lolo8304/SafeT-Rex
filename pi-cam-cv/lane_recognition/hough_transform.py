@@ -21,7 +21,7 @@ while(True):
     time.sleep(0.01)
     #image = frame.array
     ret, image = camera.read()
-    detect_lane(image)
+    detect_lane(image, False)
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
