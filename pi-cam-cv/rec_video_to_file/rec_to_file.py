@@ -1,13 +1,19 @@
 import picamera
 import argparse
 ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--len", required=True, type=int,
+ap.add_argument("-l", "--len", required=True, type=int,
 	help="len of video")
+ap.add_argument("-f", "--format", required=False, default="h264",
+	help="video format")
 args = vars(ap.parse_args())
 
 
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
-    camera.start_recording('my_video.h264')
+    filename = 'saft-rex.'+args["format"]
+    print ('recording ',args["len"], 's and save to ',filename)
+
+    camera.start_recording(filename)
     camera.wait_recording(args["len"])
     camera.stop_recording()
+    print("... done")
