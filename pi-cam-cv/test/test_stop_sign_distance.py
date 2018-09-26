@@ -121,6 +121,7 @@ class DetectionHandler():
     d_to_camera = DistanceToCamera()
     d_stop_sign = 25
     d_light = 25
+    i = 0
 
     def handle(self):
 
@@ -145,10 +146,10 @@ class DetectionHandler():
           self.d_stop_sign = d1
           self.d_light = d2
 
-        self.id = self.id + 1
+        self.i = self.i + 1
 
-        print ("", self.id, " v param 1=",v_param1, " distance=",d1)
-        print ("", self.id, " v param 2=",v_param2, " distance=",d2)
+        print ("", self.i, " v param 1=",v_param1, " distance=",d1)
+        print ("", self.i, " v param 2=",v_param2, " distance=",d2)
 
         # show the frame
         #cv2.imshow("Frame", image)
