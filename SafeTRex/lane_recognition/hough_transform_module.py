@@ -5,7 +5,7 @@ import time
 import cv2
 import numpy as np
 import math
-from Line import Line
+from .Line import Line
 
 
 # GPIO.setmode(GPIO.BOARD)
