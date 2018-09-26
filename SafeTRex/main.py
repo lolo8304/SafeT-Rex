@@ -13,7 +13,7 @@ right = 30
 
 class CarHandler:
     def __init__(self):
-        self.__driver = ServoCar()
+        self.__driver = CarStateMachine()
 
     def start(self):
         self.__driver.speed(slow)
