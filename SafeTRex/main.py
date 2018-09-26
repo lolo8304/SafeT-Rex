@@ -49,6 +49,7 @@ class StreamReader:
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
             self.currentimage = frame.array
+            self.rawCapture.truncate(0)
         #while (True):
             #self.currentimage = self.__cam.read()
 

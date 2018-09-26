@@ -169,6 +169,6 @@ class SignDetector():
             key = cv2.waitKey(1) & 0xFF
 
             # clear the stream in preparation for the next frame
-            self.__sr.rawCapture.truncate(0)
+
 
             # if the `q` key was pressed, break from the loop
