@@ -60,7 +60,7 @@ class ServoCar(object):
         self.__steer.go(90 + self.__steerFactor * float(value))
 
     def speed(self, value):
-        print("Set Speed to" + value)
+        print("Set Speed to" + str(value))
         self.__speed.go(90 + self.__speedFactor * float(value))
 
 
