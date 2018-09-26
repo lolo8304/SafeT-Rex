@@ -9,6 +9,7 @@ class LineDetector():
     def __init__(self, sr, driver):
         self.__sr = sr
         self.__driver = driver
+        print("starting lanedetector")
 
     def run(self):
         image = None

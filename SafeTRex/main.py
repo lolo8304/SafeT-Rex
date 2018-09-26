@@ -59,7 +59,7 @@ class StreamReader:
             # and occupied/unoccupied text
             self.currentimage = frame.array
             self.rawCapture.truncate(0)
-            if debug :
+            if self.isDebug():
                 # show the frame
                 cv2.imshow("Frame", self.currentimage)
         #while (True):

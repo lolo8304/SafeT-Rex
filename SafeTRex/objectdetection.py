@@ -40,7 +40,8 @@ class DistanceToCamera(object):
 
 class ObjectDetection(object):
 
-    def __init__(self):
+    def __init__(self, sr):
+        self.__sr = sr
         self.red_light = False
         self.green_light = False
         self.yellow_light = False
@@ -81,7 +82,8 @@ class ObjectDetection(object):
 
                     # check if light is on
                     if maxVal - minVal > threshold:
-                        cv2.circle(roi, maxLoc, 5, (255, 0, 0), 2)
+                        if self.__sr.isDebug():
+                            cv2.circle(roi, maxLoc, 5, (255, 0, 0), 2)
 
                         # Red light
                         if 1.0 / 8 * (height - 30) < maxLoc[1] < 4.0 / 8 * (height - 30):
@@ -108,7 +110,7 @@ class SignDetector():
 
     def run(self):
         while (True):
-            self.obj_detection = ObjectDetection()
+            self.obj_detection = ObjectDetection(self.__sr)
 
             # h1: stop sign
             self.h1 = 15.5 - 10  # cm
