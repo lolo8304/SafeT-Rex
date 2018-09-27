@@ -7,6 +7,9 @@ api = Api(app)
 __driver = CarStateMachine()
 GPIO.setwarnings(False)
 
+def getDriver():
+    global __driver
+    return __driver
 
 class Hello(Resource):
     def get(self):
@@ -14,11 +17,9 @@ class Hello(Resource):
 
 
 class Speed(Resource):
-    global __driver
-    
+
     def get(self, speed):
-        global __driver
-        __driver.setRUN(int(speed))
+        getDriver().setRUN(int(speed))
         return {'speed': int(speed)}  # Fetches first column that is Employee ID
 
 
