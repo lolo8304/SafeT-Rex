@@ -22,7 +22,8 @@ def signdetection(sr, driver):
 
 class DistanceToCamera(object):
 
-    def __init__(self):
+    def __init__(self, sr):
+        self.__sr = sr
         # camera params
         self.alpha = 8.0 * math.pi / 180
         self.v0 = 119.865631204
@@ -129,7 +130,7 @@ class SignDetector():
         self.h3 = 15.5 - 10
 
 
-        self.d_to_camera = DistanceToCamera()
+        self.d_to_camera = DistanceToCamera(self.__sr)
         self.d_stop_sign = 25
         self.d_light = 25
         self.d_speed = 25
