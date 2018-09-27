@@ -11,6 +11,7 @@ args = vars(ap.parse_args())
 
 #__driver = CarStateMachine()
 __car = ServoCar()
+GPIO.setwarnings(False)
 
 if (args["speed"] > 0):
   #__driver.setRUN(args["speed"])
