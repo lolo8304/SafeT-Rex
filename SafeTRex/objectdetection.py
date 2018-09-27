@@ -114,32 +114,30 @@ class SignDetector():
         self.__driver = driver
 
     def run(self):
+        self.obj_detection = ObjectDetection(self.__sr)
+        # cascade classifiers
+        self.stop_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/stop_sign.xml')
+        self.light_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/traffic_light.xml')
+        self.speed_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/speed_sign.xml')
+
+
+        # h1: stop sign
+        self.h1 = 15.5 - 10  # cm
+        # h2: traffic light
+        self.h2 = 15.5 - 10
+        # h3: speed sign
+        self.h3 = 15.5 - 10
+
+
+        self.d_to_camera = DistanceToCamera()
+        self.d_stop_sign = 25
+        self.d_light = 25
+        self.d_speed = 25
+
         while (True):
-            self.obj_detection = ObjectDetection(self.__sr)
-
-            # h1: stop sign
-            self.h1 = 15.5 - 10  # cm
-            # h2: traffic light
-            self.h2 = 15.5 - 10
-            # h3: speed sign
-            self.h3 = 15.5 - 10
-
-            # cascade classifiers
-            self.stop_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/stop_sign.xml')
-            self.light_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/traffic_light.xml')
-            self.speed_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/speed_sign.xml')
-
-            self.d_to_camera = DistanceToCamera()
-            self.d_stop_sign = 25
-            self.d_light = 25
-            self.d_speed = 25
-
-
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
-            image = None
-            while(image is None):
-                image = self.__sr.getCurrentimage()
+            image = self.__sr.getCurrentimage()
             grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # object detection
