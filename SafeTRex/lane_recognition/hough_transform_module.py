@@ -133,8 +133,6 @@ def isRationalLine(line):
     return line and isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
 
 def get_lane_lines(color_image):
-    color_image = color_image.copy()
-
     # grab the dimensions of the image and calculate the center
     # of the image
     (h, w) = color_image.shape[:2]

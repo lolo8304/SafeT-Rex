@@ -15,6 +15,6 @@ class LineDetector():
         while(True):
             image = None
             while(image is None):
-                image = self.__sr.currentimage
+                image = self.__sr.getCurrentImage()
             detect_lane(image, self.__sr.isDebug())
             
