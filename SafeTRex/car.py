@@ -59,8 +59,8 @@ class ServoCar(object):
         self.__steerFactor = float(self.__steer.max) / 100
 
         # Geschwindigkeit 0...100
-        self.__speed = Servo(24, 10, 0, 0, 100)
-        self.__speedFactor = 0.25
+        self.__speed = Servo(24, 20, 0, 0, 100)
+        self.__speedFactor = 0.50
 
     def hello(self):
         print('CAR: Hello from car')
@@ -75,6 +75,9 @@ class ServoCar(object):
         print("CAR: Set Speed to " + str(value))
         self.__speed.pulse(self.__speedFactor * float(value))
 
+    def close(self):
+        self.__steer.close()
+        self.__speed.close()
 
 class CarStateMachine():
     def __init__(self):
@@ -104,6 +107,7 @@ class CarStateMachine():
     def setAngle(self, angle):
         self._car.steer(angle)
 
+<<<<<<< HEAD
     def setREDLIGHT(self):
         print("Red Light")
         self._car.speed(0)
@@ -114,3 +118,7 @@ class CarStateMachine():
         self.setRUN(30)
 
 
+=======
+    def close(self):
+        self._car.close()
+>>>>>>> 60f2f611ca32b1a5273d4246d11078a49c42abac
