@@ -28,19 +28,19 @@ class Servo(object):
         print('Servo ' + name + ' from ' + str(self.min) + ' to ' + str(self.max))
 
     def angle(self, angle):
-        if angle < self.min:
-            angle = self.min
-        elif angle > self.max:
-            angle = self.max
+        #if angle < self.min:
+        #    angle = self.min
+        #elif angle > self.max:
+        #    angle = self.max
         self.io.ChangeDutyCycle(float(angle) / 18 + 2.5)
         #time.sleep(0.2)
         print('Servo angle ' + str(angle))
 
     def pulse(self, angle):
-        if angle < self.min:
-            angle = self.min
-        elif angle > self.max:
-            angle = self.max
+        #if angle < self.min:
+        #   angle = self.min
+        #elif angle > self.max:
+        #    angle = self.max
         self.io.ChangeDutyCycle(float(angle))
         #time.sleep(0.2)
         print('Servo pulse ' + str(angle))
