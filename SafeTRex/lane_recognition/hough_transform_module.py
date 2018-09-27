@@ -370,7 +370,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     if driver is not None:
         inc = inc + 1
-        if (inc > 5):
+        if (inc > 10):
             inc = 0
             #if (new_element[CONST_SMOOTH_ANGLE] != last_element[CONST_SMOOTH_ANGLE]):
             driver.setAngle(new_element[CONST_SMOOTH_ANGLE])
