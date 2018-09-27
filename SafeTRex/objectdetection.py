@@ -217,7 +217,7 @@ class StopHelper():
         if (distance > self.lastdistance - 100 and distance < self.lastdistance + 100) or distance == -1:
             self.lastdistance = distance
             self.amount += 1
-            if self.amount >= 5:
+            if self.amount >= 2:
                 self.amount = 0
                 self.lastdistance = -1
                 return True
