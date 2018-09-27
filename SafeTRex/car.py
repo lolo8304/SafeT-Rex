@@ -17,7 +17,7 @@ class Servo(object):
             max = 180
 
         GPIO.setmode(GPIO.BCM)
-        PIO.setup(gpio, GPIO.OUT)
+        GPIO.setup(gpio, GPIO.OUT)
         self.io = GPIO.PWM(gpio, hz)  # 50 Hz
         self.io.start(7.5)
         self.min = min
