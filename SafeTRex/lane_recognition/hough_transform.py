@@ -13,7 +13,7 @@ ap.add_argument("-d", "--debug", required=False, type=bool, default=False,
 	help="debug mode")
 args = vars(ap.parse_args())
 
-camera = cv2.VideoCapture("data/test_videos/test4.h264")
+camera = cv2.VideoCapture("data/test_videos/test7.h264")
 
 #camera = PiCamera()
 #camera.resolution = (320, 240)
