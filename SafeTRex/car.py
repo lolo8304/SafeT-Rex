@@ -36,7 +36,7 @@ class Servo(object):
         #time.sleep(0.2)
         print('Servo angle ' + str(angle))
 
- def pulse(self, angle):
+    def pulse(self, angle):
         if angle < self.min:
             angle = self.min
         elif angle > self.max:
