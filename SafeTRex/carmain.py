@@ -1,4 +1,4 @@
-from .car import *
+from car import *
 import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--speed", required=False, type=int, default=False,
