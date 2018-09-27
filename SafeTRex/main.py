@@ -1,4 +1,4 @@
-from .car import *
+from .car_client import *
 from .objectdetection import *
 from .lanedetector import *
 import cv2
