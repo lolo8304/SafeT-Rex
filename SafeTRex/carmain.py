@@ -13,14 +13,14 @@ args = vars(ap.parse_args())
 __car = ServoCar()
 GPIO.setwarnings(False)
 
-if (args["speed"] > 0):
+if (args["speed"] is not None):
   #__driver.setRUN(args["speed"])
   __car.speed(args["speed"])
 
-if (args["steer"] > 0):
+if (args["steer"] is not None):
   #__driver.setAngle(args["steer"])
   __car.steer(args["steer"])
 
-if (args["stop"] > 0):
+if (args["stop"] is not None):
   pass
   #__driver.setSTOP()
