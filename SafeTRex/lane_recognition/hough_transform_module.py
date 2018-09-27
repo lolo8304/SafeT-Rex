@@ -60,6 +60,14 @@ CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
 
+def isDebug():
+    global debug
+    return debug
+
+def setDebug(flag):
+    global debug
+    debug = flag
+
 def show_thumb(name, image, x_index, y_index):
     """show tumbnail on screen to debug image pipeline"""
 
@@ -201,7 +209,7 @@ def line_intersection(line1, line2):
 def drawLine(crop_img, line):
     #print("(x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
     if isRationalLine(line):
-        if debug:
+        if isDebug():
             cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),(0,255,0),10)
         #theta=theta+math.atan2((line.y2-line.y1),(line.x2-line.x1))
         #print("theta ", theta)
@@ -247,7 +255,7 @@ def calculate_steering_angle(point, crop_img):
     directionString, angle100 = steering_angle(directionX)
     print("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
     (h, w) = crop_img.shape[:2]
-    if debug:
+    if isDebug():
         if directionString == "straight":
             cv2.putText(crop_img, directionString, (int(w/2)-30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
         elif directionString == "left":
@@ -281,7 +289,7 @@ def test():
 
 
 def detect_lane(image, debugFlag = False):
-    debug = debugFlag
+    setDebug(debugFlag)
     crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
     (h, w) = crop_img.shape[:2]
    #lines = cv2.HoughLinesP(edged,1,np.pi/180,10,minLineLength,maxLineGap)
@@ -305,7 +313,7 @@ def detect_lane(image, debugFlag = False):
             drawLine(crop_img, right)
             directionString, angle100 = calculate_steering_angle(point, crop_img)
 
-    if debug:
+    if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 2, 0)
     #show_thumb("gray",gray, 4, 0)
