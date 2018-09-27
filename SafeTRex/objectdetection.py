@@ -208,6 +208,23 @@ class DetectLights():
         # print(lines)
 
 
+class StopHelper():
+    def __init__(self):
+        self.amount = 0
+        self.lastdistance = -1
+
+    def tester(self, distance):
+        if (distance > self.lastdistance - 100 and distance < self.lastdistance + 100) or distance == -1:
+            self.lastdistance = distance
+            self.amount += 1
+            if self.amount >= 5:
+                self.amount = 0
+                self.lastdistance = -1
+                return True
+            else:
+                return False
+
+
 class SignDetector():
     def __init__(self, sr, driver):
         self.__sr = sr
@@ -232,6 +249,8 @@ class SignDetector():
         self.d_light = 25
         self.d_speed = 25
 
+        stophelper = StopHelper()
+
         while (True):
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
@@ -247,7 +266,7 @@ class SignDetector():
             #Traffic Light detection
             circlesRed = DetectLights.get_red_circles(image)
             circlesGreen = DetectLights.get_green_circles(image)
-            if (circlesRed is not None and circlesRed.any() != None):
+            if circlesRed is not None and circlesRed.any() != None:
                 for circle in circlesRed:
                     circles = np.round(circle[0, :]).astype("int")
                     # loop over the (x, y) coordinates and radius of the circles
@@ -257,8 +276,8 @@ class SignDetector():
                         cv2.circle(image, (x, y), r, (0, 255, 0), 4)
                         cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 
-            if (circlesRed is not None and circlesRed.any() != None):
-                for circle in circlesRed:
+            if circlesGreen is not None and circlesGreen.any() != None:
+                for circle in circlesGreen:
                     circles = np.round(circle[0, :]).astype("int")
                     # loop over the (x, y) coordinates and radius of the circles
                     for (x, y, r) in circles:
@@ -270,11 +289,13 @@ class SignDetector():
             d2 = 0
             d3 = 0
             d4 = 0
+
             # distance measurement
             if v_param1 > 0 or v_param2 > 0 or v_param3 > 0 or v_param4 > 0:
                 if v_param1 > 0:
                     d1 = self.d_to_camera.calculate(v_param1, self.h1, 200, image)
-                    self.__driver.setSTOP()
+                    if stophelper.tester(d1):
+                        self.__driver.setSTOP()
                 if v_param3 > 0:
                     d3 = self.d_to_camera.calculate(v_param3, self.h3, 200, image)
                     self.__driver.setRUN(50)
@@ -297,3 +318,5 @@ class SignDetector():
             # clear the stream in preparation for the next frame
 
             # if the `q` key was pressed, break from the loop
+
+
