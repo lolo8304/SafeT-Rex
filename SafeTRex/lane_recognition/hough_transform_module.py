@@ -133,6 +133,8 @@ def isRationalLine(line):
     return line and isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
 
 def get_lane_lines(color_image):
+    color_image = color_image.copy()
+
     # grab the dimensions of the image and calculate the center
     # of the image
     (h, w) = color_image.shape[:2]
@@ -140,7 +142,6 @@ def get_lane_lines(color_image):
     #h3 = int(h / 2)
     h3 = 0
     crop_img = color_image[h3: h3 + h, 0:w]
-
     gray = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (17, 17), 0)
     edged = cv2.Canny(blurred, 85, 85)
