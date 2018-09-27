@@ -107,7 +107,6 @@ class CarStateMachine():
     def setAngle(self, angle):
         self._car.steer(angle)
 
-<<<<<<< HEAD
     def setREDLIGHT(self):
         print("Red Light")
         self._car.speed(0)
@@ -117,8 +116,5 @@ class CarStateMachine():
         print("Go!")
         self.setRUN(30)
 
-
-=======
     def close(self):
         self._car.close()
->>>>>>> 60f2f611ca32b1a5273d4246d11078a49c42abac
