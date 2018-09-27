@@ -11,8 +11,6 @@ args = vars(ap.parse_args())
 
 __driver = CarStateMachine()
 
-__driver = CarStateMachine()
-
 if (args["speed"] > 0):
   __driver.setRUN(args["speed"])
 
