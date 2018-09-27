@@ -5,6 +5,7 @@ import time
 import cv2
 import numpy as np
 import math
+from collections import deque
 
 
 
@@ -59,6 +60,7 @@ CARD_WRAP_LONG_MAX = 640
 CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
+
 
 def isDebug():
     global debug
@@ -249,18 +251,22 @@ def steering_angle(directionX):
     else:
         return "right", directionX100
 
+
+def show_steering_angle(point, directionString, angle100, crop_img, offset = 0):
+    print("smooth direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
+    (h, w) = crop_img.shape[:2]
+    if isDebug():
+        if directionString == "straight":
+            cv2.putText(crop_img, directionString+","+str(angle100), (int(w/2)-30, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        elif directionString == "left":
+            cv2.putText(crop_img, directionString+","+str(angle100), (30, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        else:
+            cv2.putText(crop_img, directionString+","+str(angle100), (w-130, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+
 def calculate_steering_angle(point, crop_img):
     directionX = steering_directionX( point, crop_img)
     directionString, angle100 = steering_angle(directionX)
     print("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
-    (h, w) = crop_img.shape[:2]
-    if isDebug():
-        if directionString == "straight":
-            cv2.putText(crop_img, directionString, (int(w/2)-30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
-        elif directionString == "left":
-            cv2.putText(crop_img, directionString, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
-        else:
-            cv2.putText(crop_img, directionString, (w-60, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
     return directionString, angle100
 
 def test():
@@ -286,6 +292,43 @@ def test():
   testDirectionX = steering_directionX(p, None, 480)
   print ("test direct for ", p, " is ", testDirectionX)
 
+CONST_DIR = 0
+CONST_ANGLE = 1
+CONST_INC = 2
+CONST_SMOOTH_DIR = 3
+CONST_SMOOTH_ANGLE = 4
+
+smooth_buffer = deque(maxlen=5)
+last_element = None
+
+def smooth_directionX(directionString, angle100):
+    global last_element
+    print("----------------------------------")
+    new_element = [directionString, angle100, -1, directionString, angle100]
+    if last_element is None:
+        new_element[CONST_INC] = 1
+        print ("first element")
+    else:
+        if last_element[CONST_DIR] == directionString:
+            new_element[CONST_INC] = last_element[CONST_INC] + 1
+            print ("SAME as before", new_element[CONST_INC])
+            if last_element[CONST_INC] < 6:
+                print ("KEEP SMOOTH direction", last_element[CONST_INC])
+                new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
+                new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
+            else:
+                print ("ADAPT SMOOTH DIRECTION", new_element[CONST_SMOOTH_DIR])
+                new_element[CONST_SMOOTH_DIR] = new_element[CONST_DIR]
+                new_element[CONST_SMOOTH_ANGLE] = new_element[CONST_ANGLE]
+        else:
+            print ("NEW direction - KEEP SMOOTH direction")
+            new_element[CONST_INC] = 1
+            new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
+            new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
+    last_element = new_element
+    return new_element
+
+
 
 def detect_lane(image, debugFlag = False):
     setDebug(debugFlag)
@@ -293,6 +336,10 @@ def detect_lane(image, debugFlag = False):
     (h, w) = crop_img.shape[:2]
    #lines = cv2.HoughLinesP(edged,1,np.pi/180,10,minLineLength,maxLineGap)
 
+    directionString = None
+    angle100 = 0
+    point = (0, 0)
+    crossed = False
     if (isRationalLine(left) and isRationalLine(right)):
         crossed, point = line_intersection2(left, right)
         if (crossed):
@@ -311,6 +358,15 @@ def detect_lane(image, debugFlag = False):
         if crossed:
             drawLine(crop_img, right)
             directionString, angle100 = calculate_steering_angle(point, crop_img)
+
+    if not crossed:
+        #print("no crossed lines")
+        return
+
+    #show_steering_angle(point, directionString, angle100, crop_img, 50)
+
+    new_element = smooth_directionX(directionString, angle100)
+    show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
 
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
