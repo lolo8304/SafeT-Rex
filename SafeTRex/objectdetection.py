@@ -309,12 +309,12 @@ class SignDetector():
                             cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
                     # show the output image
 
-            if circlesRed != []:
-                if lighthelper.tester(True):
-                    self.__driver.setREDLIGHT()
-            else:
-                if lighthelper.tester(False):
-                    self.__driver.setGREENLIGHT()
+            # if circlesRed != []:
+            #     if lighthelper.tester(True):
+            #         self.__driver.setREDLIGHT()
+            # else:
+            #     if lighthelper.tester(False):
+            #         self.__driver.setGREENLIGHT()
             d1 = 0
             d2 = 0
             d3 = 0
