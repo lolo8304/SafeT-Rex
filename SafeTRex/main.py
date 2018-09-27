@@ -49,11 +49,12 @@ class StreamReader:
 
         #ret, self.currentimage = self.__cam.read()
 
-    def getCurrentImage():
+    def getCurrentImage(self):
         image = None
+        image = self.currentimage
         while(image is None):
-            image = self.currentimage.copy()
-        return image
+            image = self.currentimage
+        return image.copy()
 
     def isDebug(self):
         return self.__debug
