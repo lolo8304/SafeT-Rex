@@ -60,7 +60,7 @@ class ServoCar(object):
 
         # Geschwindigkeit 0...100
         self.__speed = Servo(24, 20, 0, 0, 100)
-        self.__speedFactor = 0.25
+        self.__speedFactor = 0.50
 
     def hello(self):
         print('CAR: Hello from car')
