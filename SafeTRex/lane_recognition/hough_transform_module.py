@@ -328,9 +328,10 @@ def smooth_directionX(directionString, angle100):
     last_element = new_element
     return new_element
 
-
+inc = 0
 
 def detect_lane(image, debugFlag = False, driver = None):
+    global inc 
     setDebug(debugFlag)
     crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
     (h, w) = crop_img.shape[:2]
@@ -368,9 +369,12 @@ def detect_lane(image, debugFlag = False, driver = None):
     new_element = smooth_directionX(directionString, angle100)
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     if driver is not None:
-        #if (new_element[CONST_SMOOTH_ANGLE] != last_element[CONST_SMOOTH_ANGLE]):
-        driver.setAngle(new_element[CONST_SMOOTH_ANGLE])
-    time.sleep(0.05)
+        inc = inc + 1
+        if (inc > 5):
+            inc = 0
+            #if (new_element[CONST_SMOOTH_ANGLE] != last_element[CONST_SMOOTH_ANGLE]):
+            driver.setAngle(new_element[CONST_SMOOTH_ANGLE])
+    time.sleep(0.1)
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 2, 0)
