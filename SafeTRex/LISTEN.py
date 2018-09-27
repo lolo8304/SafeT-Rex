@@ -14,6 +14,8 @@ class Hello(Resource):
 
 
 class Speed(Resource):
+    global __driver
+    
     def get(self, speed):
         global __driver
         __driver.setRUN(int(speed))
