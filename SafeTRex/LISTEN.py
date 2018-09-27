@@ -4,7 +4,7 @@ from car import *
 
 app = Flask(__name__)
 api = Api(app)
-__driver = CarStateMachine()
+__driver = CarStateMachine(0)
 GPIO.setwarnings(False)
 
 def getDriver():

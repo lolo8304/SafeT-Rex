@@ -15,7 +15,7 @@ right = 30
 class CarHandler:
     def __init__(self, args):
         self.__args = args
-        self.__driver = CarStateMachine(0)
+        self.__driver = CarStateMachine(30)
 
     def start(self):
         self.__driver.setRUN(30)
