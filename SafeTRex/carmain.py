@@ -21,5 +21,5 @@ if (args["steer"] > 0):
   __car.steer(args["steer"])
 
 if (args["stop"] > 0):
+  pass
   #__driver.setSTOP()
-
