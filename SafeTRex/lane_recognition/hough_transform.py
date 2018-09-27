@@ -5,7 +5,6 @@ import time
 import cv2
 import numpy as np
 import math
-from Line import Line
 from hough_transform_module import detect_lane
 
 camera = cv2.VideoCapture("data/test_videos/test4.h264")
