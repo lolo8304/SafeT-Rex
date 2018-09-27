@@ -15,6 +15,7 @@ class Hello(Resource):
 
 class Speed(Resource):
     def get(self, speed):
+        global __driver
         __driver.setRUN(int(speed))
         return {'speed': int(speed)}  # Fetches first column that is Employee ID
 
