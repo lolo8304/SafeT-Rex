@@ -1,12 +1,12 @@
 # import RPi.GPIO as GPIO
 import time
-import sys, getopt
+import sys
 
 
 class Servo(object):
     """Ansteuerung von Servos per PWM"""
 
-    def __init__(self, gpio, min=0, max=180):
+    def __init__(self, gpio, hz=50, min=0, max=180):
         if min > max:
             tmp = min
             min = max
@@ -18,7 +18,7 @@ class Servo(object):
 
         # GPIO.setmode(GPIO.BCM)
         # PIO.setup(gpio, GPIO.OUT)
-        # self.io = GPIO.PWM(gpio, 50)  # 50 Hz
+        # self.io = GPIO.PWM(gpio, hz)  # 50 Hz
         # self.io.start(7.5)
         self.min = min
         self.max = max
@@ -32,7 +32,7 @@ class Servo(object):
         elif angle > self.max:
             angle = self.max
         # self.io.ChangeDutyCycle(float(angle) / 18 + 2.5)
-        time.sleep(0.2)
+        #time.sleep(0.2)
         print('Servo angle ' + str(angle))
 
     def close(self):
@@ -45,10 +45,13 @@ class ServoCar(object):
     """Ansteuerung eines Modellautos mit Steuer und Speed"""
 
     def __init__(self):
-        self.__steer = Servo(23, 45, 135)
+        # Steuerung -100 ... 100
+        self.__steer = Servo(23, 50, 45, 135)
         self.__steerFactor = float(self.__steer.max) / 100
-        self.__speed = Servo(24)
-        self.__speedFactor = float(self.__speed.max) / 255 / 4.5
+
+        # Geschwindigkeit 0...100
+        self.__speed = Servo(24, 10, 0, 100)
+        self.__speedFactor = 0.25
 
     def hello(self):
         print('Hello from car')
@@ -60,7 +63,7 @@ class ServoCar(object):
 
     def speed(self, value):
         print("Set Speed to" + str(value))
-        self.__speed.go(90 + self.__speedFactor * float(value))
+        self.__speed.go(self.__speedFactor * float(value))
 
 
 class CarStateMachine():
