@@ -9,14 +9,16 @@ ap.add_argument("-c", "--steer", required=False, type=int, default=False,
 	help="steer mode")
 args = vars(ap.parse_args())
 
-self.__driver = CarStateMachine()
+__driver = CarStateMachine()
+
+__driver = CarStateMachine()
 
 if (args["speed"] > 0):
-  self.__driver.setRUN(args["speed"])
+  __driver.setRUN(args["speed"])
 
 if (args["steer"] > 0):
-  self.__driver.setAngle(args["steer"])
+  __driver.setAngle(args["steer"])
 
 if (args["stop"] > 0):
-  self.__driver.setSTOP()
+  __driver.setSTOP()
 
