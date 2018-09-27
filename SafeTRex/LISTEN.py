@@ -4,6 +4,8 @@ from car import *
 
 app = Flask(__name__)
 api = Api(app)
+__driver = CarStateMachine()
+GPIO.setwarnings(False)
 
 
 class Hello(Resource):
@@ -13,7 +15,8 @@ class Hello(Resource):
 
 class Speed(Resource):
     def get(self, speed):
-        return {'speed': speed}  # Fetches first column that is Employee ID
+        __driver.speed(int(speed))
+        return {'speed': int(speed)}  # Fetches first column that is Employee ID
 
 
 api.add_resource(Hello, '/hello')  # Route_1
