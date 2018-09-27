@@ -45,22 +45,6 @@ def show_thumb(name, image, x_index, y_index):
 
 
 
-def hough_transform_module(sr, driver):
-    ld = LaneDetector(sr, driver)
-    ld.run()
-
-
-class LaneDetector():
-  def __init__(self, sr, driver):
-      self.__sr = sr
-      self.__driver = driver
-
-  def run(self):
-      image = None
-      while(image is None):
-          image = self.__sr.currentimage
-
-
 
 def hough_lines_detection(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
