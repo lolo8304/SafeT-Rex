@@ -68,7 +68,7 @@ class StreamReader:
             self.rawCapture.truncate(0)
             if self.isDebug():
                 # show the frame
-                cv2.imshow("Frame", self.currentimage)
+                cv2.imshow("Frame", self.getCurrentImage())
         #while (True):
             #self.currentimage 
             # = self.__cam.read()

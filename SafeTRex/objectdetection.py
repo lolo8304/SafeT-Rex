@@ -139,7 +139,7 @@ class SignDetector():
             # and occupied/unoccupied text
             image = None
             while(image is None):
-                image = self.__sr.currentimage
+                image = self.__sr.getCurrentimage()
             grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # object detection
