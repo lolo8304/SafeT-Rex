@@ -137,7 +137,7 @@ class SignDetector():
         while (True):
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
-            image = self.__sr.getCurrentimage()
+            image = self.__sr.getCurrentImage()
             grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # object detection
