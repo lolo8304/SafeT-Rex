@@ -311,8 +311,8 @@ class SignDetector():
                 print("v param 2 |LIGHTSIGNAL|=", v_param2, " distance=", d2)
                 # if v_param3 > 0:
                 print("v param 3 |TEMPOLIMIT|=", v_param3, " distance=", d3)
-
-            cv2.imshow("ObjectDetection", image)
+            if self.__sr.isDebug():
+                cv2.imshow("ObjectDetection", image)
             key = cv2.waitKey(1) & 0xFF
 
             # clear the stream in preparation for the next frame
