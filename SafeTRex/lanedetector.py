@@ -12,9 +12,10 @@ class LineDetector():
         print("starting lanedetector")
 
     def run(self):
+        start_time = time.time() # start time of the loop
         while(True):
             image = None
             while(image is None):
                 image = self.__sr.currentimage
             detect_lane(image, self.__sr.isDebug())
-            print("lane detected")
+            print("FPS: ", 1.0 / (time.time() - start_time)) # FPS = 1 / time to process loop
