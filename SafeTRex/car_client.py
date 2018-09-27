@@ -35,7 +35,7 @@ class CarStateMachine():
         print("Last Stop to recent!")
 
     def setAngle(self, angle):
-        SetRemoteValue("steer", angle)
+        SetRemoteValue("steer", -angle)
 
     def setREDLIGHT(self):
         print("Red Light")
