@@ -80,10 +80,10 @@ class ServoCar(object):
         self.__speed.close()
 
 class CarStateMachine():
-    def __init__(self):
-        self.__state = ("RUN", 30)
+    def __init__(self, init=30):
+        self.__state = ("RUN", init)
         self._car = ServoCar()
-        self.setRUN(30)
+        self.setRUN(init)
         self.lastSTOP = 0
 
     def setRUN(self, tempo):
