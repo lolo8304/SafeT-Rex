@@ -5,7 +5,7 @@ import time
 import cv2
 import numpy as np
 import math
-from .Line import Line
+from Line import Line
 
 
 # GPIO.setmode(GPIO.BOARD)
@@ -89,7 +89,7 @@ def isRationalNumber(f):
     return -1000.0 < f < 1000.0
 
 def isRationalLine(line):
-    return isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
+    return line and isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
 
 def get_lane_lines(color_image):
     # grab the dimensions of the image and calculate the center
