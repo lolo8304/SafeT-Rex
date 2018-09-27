@@ -249,7 +249,7 @@ class SignDetector():
             circlesGreen = DetectLights.get_green_circles(image)
             if (circlesRed is not None and circlesRed.any() != None):
                 for circle in circlesRed:
-                    circles = np.round(circlesRed[0, :]).astype("int")
+                    circles = np.round(circle[0, :]).astype("int")
                     # loop over the (x, y) coordinates and radius of the circles
                     for (x, y, r) in circles:
                         # draw the circle in the output image, then draw a rectangle
@@ -257,9 +257,9 @@ class SignDetector():
                         cv2.circle(image, (x, y), r, (0, 255, 0), 4)
                         cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 
-            if (circlesGreen is not None and circlesGreen.any() != None):
+            if (circlesRed is not None and circlesRed.any() != None):
                 for circle in circlesRed:
-                    circles = np.round(circlesGreen[0, :]).astype("int")
+                    circles = np.round(circle[0, :]).astype("int")
                     # loop over the (x, y) coordinates and radius of the circles
                     for (x, y, r) in circles:
                         # draw the circle in the output image, then draw a rectangle
