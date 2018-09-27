@@ -75,6 +75,9 @@ class ServoCar(object):
         print("CAR: Set Speed to " + str(value))
         self.__speed.pulse(self.__speedFactor * float(value))
 
+    def close(self):
+        self.__steer.close()
+        self.__speed.close()
 
 class CarStateMachine():
     def __init__(self):

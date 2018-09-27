@@ -1,4 +1,5 @@
 from car import *
+import time
 import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--speed", required=False, type=int, default=False,
@@ -24,3 +25,7 @@ if (args["steer"] is not None):
 if (args["stop"] is not None):
   pass
   #__driver.setSTOP()
+
+print("sleep to close")
+time.sleep(2)
+__car.stop()
