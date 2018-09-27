@@ -225,6 +225,28 @@ class StopHelper():
                 return False
 
 
+class LightHelper():
+    def __init__(self):
+        self.amount = 0
+        self.wasRed = False
+
+    def tester(self, isRed):
+        if isRed:
+            self.amount += 1
+        else:
+            self.amount = 0
+            if self.wasRed:
+                self.wasRed = False
+                return True
+        if self.amount > 5:
+            amount = 0
+            self.wasRed = True
+            return True
+        else:
+            return False
+
+
+
 class SignDetector():
     def __init__(self, sr, driver):
         self.__sr = sr
@@ -234,7 +256,6 @@ class SignDetector():
         self.obj_detection = ObjectDetection(self.__sr)
         # cascade classifiers
         self.stop_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/stop_sign.xml')
-        self.light_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/traffic_light.xml')
         self.speed_cascade = cv2.CascadeClassifier('SafeTRex/cascade_xml/speed_sign.xml')
 
         # h1: stop sign
@@ -250,6 +271,7 @@ class SignDetector():
         self.d_speed = 25
 
         stophelper = StopHelper()
+        lighthelper = LightHelper()
 
         while (True):
             # grab the raw NumPy array representing the image, then initialize the timestamp
@@ -259,39 +281,47 @@ class SignDetector():
 
             # object detection
             v_param1 = self.obj_detection.detect(self.stop_cascade, grey_image, image, "STOP")
-            v_param2 = self.obj_detection.detect(self.light_cascade, grey_image, image)
             v_param3 = self.obj_detection.detect(self.speed_cascade, grey_image, image, "Tempo 50")
-            v_param4 = self.obj_detection.detect(self.light_cascade, grey_image, image, "Light Signal", True,
-                                                 default_threshold=8)
+
             #Traffic Light detection
             circlesRed = DetectLights.get_red_circles(image)
             circlesGreen = DetectLights.get_green_circles(image)
-            if circlesRed is not None and circlesRed.any() != None:
-                for circle in circlesRed:
-                    circles = np.round(circle[0, :]).astype("int")
-                    # loop over the (x, y) coordinates and radius of the circles
-                    for (x, y, r) in circles:
-                        # draw the circle in the output image, then draw a rectangle
-                        # corresponding to the center of the circle
-                        cv2.circle(image, (x, y), r, (0, 255, 0), 4)
-                        cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 
-            if circlesGreen is not None and circlesGreen.any() != None:
-                for circle in circlesGreen:
-                    circles = np.round(circle[0, :]).astype("int")
-                    # loop over the (x, y) coordinates and radius of the circles
-                    for (x, y, r) in circles:
-                        # draw the circle in the output image, then draw a rectangle
-                        # corresponding to the center of the circle
-                        cv2.circle(image, (x, y), r, (0, 255, 0), 4)
-                        cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+            if self.__sr.isDebug():
+                if circlesRed is not None:
+                    for circle in circlesRed:
+                        circles = [np.round(circle[0, :]).astype("int")]
+                        # loop over the (x, y) coordinates and radius of the circles
+                        for (x, y, r) in circles:
+                            # draw the circle in the output image, then draw a rectangle
+                            # corresponding to the center of the circle
+                            cv2.circle(image, (x, y), r, (0, 255, 0), 4)
+                            cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
+                if circlesGreen is not None and circlesGreen.any() != None:
+                    for circle in circlesGreen:
+                        circles = [np.round(circle[0, :]).astype("int")]
+                        # loop over the (x, y) coordinates and radius of the circles
+                        for (x, y, r) in circles:
+                            # draw the circle in the output image, then draw a rectangle
+                            # corresponding to the center of the circle
+                            cv2.circle(image, (x, y), r, (0, 255, 0), 4)
+                            cv2.rectangle(image, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+                    # show the output image
+
+            if circlesRed != []:
+                if lighthelper.tester(True):
+                    self.__driver.setREDLIGHT()
+            else:
+                if lighthelper.tester(False):
+                    self.__driver.setGREENLIGHT()
             d1 = 0
             d2 = 0
             d3 = 0
             d4 = 0
 
             # distance measurement
-            if v_param1 > 0 or v_param2 > 0 or v_param3 > 0 or v_param4 > 0:
+            if v_param1 > 0 or v_param3 > 0:
                 if v_param1 > 0:
                     d1 = self.d_to_camera.calculate(v_param1, self.h1, 200, image)
                     if stophelper.tester(d1):
@@ -299,21 +329,18 @@ class SignDetector():
                 if v_param3 > 0:
                     d3 = self.d_to_camera.calculate(v_param3, self.h3, 200, image)
                     self.__driver.setRUN(50)
-                if v_param4 > 0:
-                    d4 = self.d_to_camera.calculate(v_param4, self.h3, 100, image)
                 self.d_stop_sign = d1
                 self.d_light = d2
                 self.d_speed = d3
 
                 # if v_param1 > 0:
                 print("v param 1 |STOPSIGN|=", v_param1, " distance=", d1)
-                # if v_param2 > 0:
-                print("v param 2 |LIGHTSIGNAL|=", v_param2, " distance=", d2)
                 # if v_param3 > 0:
                 print("v param 3 |TEMPOLIMIT|=", v_param3, " distance=", d3)
+
             if self.__sr.isDebug():
                 cv2.imshow("ObjectDetection", image)
-            key = cv2.waitKey(1) & 0xFF
+                key = cv2.waitKey(1) & 0xFF
 
             # clear the stream in preparation for the next frame
 
