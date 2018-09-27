@@ -22,7 +22,7 @@ class Speed(Resource):
         return {'speed': int(speed)}  
 class Steer(Resource):
     def get(self, steer):
-        getDriver().setRUN(int(speed))
+        getDriver().setAngle(int(steer))
         return {'steer': int(steer)}  
 
 
