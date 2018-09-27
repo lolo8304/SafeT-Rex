@@ -106,3 +106,6 @@ class CarStateMachine():
 
     def setAngle(self, angle):
         self._car.steer(angle)
+
+    def close(self):
+        self._car.close()
