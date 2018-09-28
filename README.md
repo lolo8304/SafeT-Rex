@@ -88,6 +88,9 @@ tbd
 ### Autonomous traffic lights with distance detector
 tbd
 
+### 3D printed STOP + 50 sign
+tbd
+
 ### Our mobile test track
 tbd
 
