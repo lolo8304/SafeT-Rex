@@ -65,12 +65,12 @@ class CarStateMachine():
         print("Go!")
         self.setRUN(30)
 
-    def setSpeedFactor(self, value)
+    def setSpeedFactor(self, value):
         self.SetRemoteValue("speedFactor", format(value), '.2f'))
 
-    def incSpeedFactor(self)
+    def incSpeedFactor(self):
         self.SetRemoteCall("incSpeedFactor")
-    def decSpeedFactor(self)
+    def decSpeedFactor(self):
         self.SetRemoteCall("decSpeedFactor")
 
     def close(self):
