@@ -69,8 +69,8 @@ class ServoCar(object):
 
     def steer(self, value):
         print("CAR: steer to " + str(value))
-        self.__steer.angle(80 + self.__steerFactor * float(value))
-        # actually should be 90 but calibration tires shows -10
+        self.__steer.angle(83 + self.__steerFactor * float(value))
+        # actually should be 90 but calibration tires shows -7
 
     def speed(self, value):
         print("CAR: Set Speed to " + str(value))
