@@ -105,11 +105,11 @@ class CarStateMachine():
     def getSpeed(self):
         return self.__state[1]
 
-    def speedAdaption(self, newSpeed):
-        angles = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
-        speedFactor = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
-        newSpeed // 5 * 5
-        oldSpeed = self.getSpeed()
+    def speedAdaption(self, newAngle):
+        ## angles = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
+        ## speed inc 5 per 5 degree
+        oldSpeed = self.getAngle()
+        return (abs(newAngle) - abs(oldSpeed)) / 9
 
     def setRUN(self, tempo):
         if tempo == -1:
@@ -139,6 +139,7 @@ class CarStateMachine():
         angle = max(-45, min(angle, 45))
         self.__stateAngle = ("ANGLE", angle)
         self._car.steer(angle)
+        self.setRUN(self.getSpeed() + this.speedAdaption(angle))
 
     def left(self):
         self.setAngle(self.getAngle()+5)
