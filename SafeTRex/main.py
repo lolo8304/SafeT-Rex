@@ -90,10 +90,16 @@ class StreamReader:
             # and occupied/unoccupied text
             self.currentimage = frame.array
             self.rawCapture.truncate(0)
+            img = self.getCurrentImage()
+            self.recordImage(img)
             if self.isDebug():
                 # show the frame
-                self.recordImage(self.getCurrentImage())
-                cv2.imshow("Frame", self.getCurrentImage())
+                cv2.imshow("Frame", img)
+
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
+
         #while (True):
             #self.currentimage 
             # = self.__cam.read()
