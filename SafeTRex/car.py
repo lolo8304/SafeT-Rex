@@ -95,12 +95,13 @@ class ServoCar(object):
 class CarStateMachine():
     def __init__(self, init=30):
         self.__state = ("RUN", init)
+        self.__stateAngle = ("ANGLE", 0)
         self._car = ServoCar()
         self.setRUN(init)
         self.lastSTOP = 0
 
     def getAngle(self):
-        return self.__state[1]
+        return self.__stateAngle[1]
 
     def setRUN(self, tempo):
         if tempo == -1:
@@ -121,14 +122,14 @@ class CarStateMachine():
         print("Last Stop to recent!")
 
     def setAngle(self, angle):
+        self.__stateAngle[1] = angle
         self._car.steer(angle)
 
     def left(self):
-        self.setAngle(self.getAngle()-2)
+        self.setAngle(self.getAngle()-5)
 
-    def left(self):
-        self.setAngle(self.getAngle()+2)
-
+    def right(self):
+        self.setAngle(self.getAngle()+5)
 
     def setREDLIGHT(self):
         print("Red Light")
