@@ -31,7 +31,6 @@ def waitForKey(keys):
                 ch = sys.stdin.read(1)
                 if not ch or ch == chr(4):
                     break
-                print('%02x' % ord(ch),ord(ch),ch)
                 if ch in keys:
                   return ch
         except (KeyboardInterrupt, EOFError):
@@ -42,15 +41,16 @@ left = "j"
 right = "l"
 faster = "i"
 slower = "m"
-incSpeedFactor = "s"
-decSpeedFactor = "a"
+incSpeedFactor = "x"
+decSpeedFactor = "y"
+speedEdit = "e"
 quit = "q"
 
 driver = CarStateMachine(recording=args["recording"], init=0, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlimasq")
+    key = waitForKey(keys="jlimxyqse")
     if (key == left):
       driver.left()
     elif key == right:
@@ -63,6 +63,9 @@ if __name__ == '__main__':
       driver.incSpeedFactor()
     elif key == decSpeedFactor:
       driver.decSpeedFactor()
+    elif key == speedEdit:
+      speed = input("Enter your speed (0-100)? ")
+      driver.setRUN(int(speed))
     elif key == quit:
       driver.setRUN(0)
       driver.setAngle(0)
