@@ -22,7 +22,7 @@ class LineDetector():
     def run(self):
         while(True):
             image  = self.__sr.getCurrentImage()
-            if self.__sr.needsRecording():
+            if False and self.__sr.needsRecording():
                 if self.__video is None:
                     name = "safet-rex-recording-"+str(self.__sr.recordingNo())+".h264"
                     print("start frame recording to ", name)
