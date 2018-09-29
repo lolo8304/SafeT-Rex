@@ -75,6 +75,11 @@ class ServoCar(object):
         print("CAR: Set Speed to " + str(value))
         self.__speed.pulse(self.__speedFactor * float(value))
 
+    def speedFactor(self, value):
+        print("CAR: Set Speed factor to " + str(value))
+        self.__speedFactor = value
+
+
     def close(self):
         self.__steer.close()
         self.__speed.close()
@@ -115,6 +120,9 @@ class CarStateMachine():
     def setGREENLIGHT(self):
         print("Go!")
         self.setRUN(30)
+
+    def setSpeedFactor(self, value):
+        self._car.speedFactor(value)
 
     def close(self):
         self._car.close()

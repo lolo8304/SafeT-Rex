@@ -20,15 +20,20 @@ class Speed(Resource):
     def get(self, speed):
         getDriver().setRUN(int(speed))
         return {'speed': int(speed)}  
+class SpeedFactor(Resource):
+    def get(self, speedFactor):
+        getDriver().setSpeedFactor(float(speedFactor))
+        return {'speedFactor': float(speedFactor)}  
 class Steer(Resource):
     def get(self, steer):
         getDriver().setAngle(int(steer))
         return {'steer': int(steer)}  
 
 
-api.add_resource(Hello, '/hello')  # Route_1
-api.add_resource(Speed, '/speed/<speed>')  # Route_3
-api.add_resource(Steer, '/steer/<steer>')  # Route_3
+api.add_resource(Hello, '/hello')  
+api.add_resource(Speed, '/speed/<speed>')  
+api.add_resource(SpeedFactor, '/speedFactor/<speedFactor>')  
+api.add_resource(Steer, '/steer/<steer>')
 
 if __name__ == '__main__':
     app.run(host= '0.0.0.0', port='5002')
