@@ -35,7 +35,7 @@ class Steer(Resource):
     def get(self, steer):
         if (steer == "left"):
             getDriver().left()
-        elif: steer == right":
+        elif steer == right":
             getDriver().right()
         else:
             getDriver().setAngle(int(steer))
