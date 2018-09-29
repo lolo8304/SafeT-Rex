@@ -39,7 +39,7 @@ class Steer(Resource):
             getDriver().right()
         else:
             getDriver().setAngle(int(steer))
-        return {'steer': int(steer)}  
+        return {'steer': getDriver().getAngle()}  
 
 
 api.add_resource(Hello, '/hello')  
