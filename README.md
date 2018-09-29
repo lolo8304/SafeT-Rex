@@ -6,6 +6,11 @@ We have lots of experience in totally 31 Hackathons :-)
 
 context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers would like to show today how this is working. Important for 2030's autonomous cars are the the newest prevention methods to reduce crashs. In 2030 we are not sure what animals still exist and which are new. Be prepared - Grrrrr.
 
+## We built it 
+2019-09-27 14:31 - here is the first successful trial with lane detection - not perfect yet but a start.
+[![Watch the video](https://raw.github.com/lolo8304/SafeT-Rex/master/youtube-preview.png)](https://www.youtube.com/watch?v=79lioIJ-ZHQ)
+
+
 ## Features
 - turn an existing RC car into a software controllable car using Arduino, raspberry pi3, picam
 - use line or lane detection to control the car and drive along a short track 
@@ -74,7 +79,7 @@ Open CV
 # Our AA hack solution
 
 here is the first successful trial with lane detection - not perfect yet but a start.
-[![Watch the video](https://raw.github.com/lolo8304/SafeT-Rex/master/ressources/youtube-preview.png)](https://www.youtube.com/watch?v=79lioIJ-ZHQ)
+[![Watch the video](https://raw.github.com/lolo8304/SafeT-Rex/master/youtube-preview.png)](https://www.youtube.com/watch?v=79lioIJ-ZHQ)
 
 
 ## highlevel architecture
