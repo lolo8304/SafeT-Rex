@@ -102,6 +102,8 @@ class CarStateMachine():
 
     def getAngle(self):
         return self.__stateAngle[1]
+    def getSpeed(self):
+        return self.__state[1]
 
     def setRUN(self, tempo):
         if tempo == -1:
@@ -122,7 +124,7 @@ class CarStateMachine():
         print("Last Stop to recent!")
 
     def setAngle(self, angle):
-        self.__stateAngle[1] = angle
+        self.__stateAngle = ("ANGLE", angle)
         self._car.steer(angle)
 
     def left(self):
