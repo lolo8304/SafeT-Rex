@@ -61,4 +61,6 @@ if __name__ == '__main__':
     elif key == speedFacter:
       driver.incSpeedFactor()
     elif key == quit:
+      driver.setRUN(0)
+      driver.setAngle(0)
       break
