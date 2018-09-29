@@ -131,10 +131,16 @@ class CarStateMachine():
 
     def setSpeedFactor(self, value):
         self._car.speedFactor(value)
+        self.setRUN(-1)
+
     def incSpeedFactor(self):
         self._car.incSpeedFactor()
+        self.setRUN(-1)
+
     def decSpeedFactor(self):
         self._car.decSpeedFactor()
+        self.setRUN(-1)
+
     def getSpeedFactor(self):
         return self._car.getSpeedFactor()
 
