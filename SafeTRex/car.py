@@ -78,7 +78,12 @@ class ServoCar(object):
     def speedFactor(self, value):
         print("CAR: Set Speed factor to " + str(value))
         self.__speedFactor = value
-
+    def incSpeedFactor(self):
+        print("CAR: inc Speed factor by 0.05")
+        self.__speedFactor = self.__speedFactor + 0.05
+    def decSpeedFactor(self):
+        print("CAR: dec Speed factor by 0.05")
+        self.__speedFactor = self.__speedFactor - 0.05
 
     def close(self):
         self.__steer.close()
@@ -123,6 +128,10 @@ class CarStateMachine():
 
     def setSpeedFactor(self, value):
         self._car.speedFactor(value)
+    def incSpeedFactor(self):
+        self._car.incSpeedFactor()
+    def decSpeedFactor(self):
+        self._car.decSpeedFactor()
 
     def close(self):
         self._car.close()

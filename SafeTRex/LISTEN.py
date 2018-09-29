@@ -22,7 +22,12 @@ class Speed(Resource):
         return {'speed': int(speed)}  
 class SpeedFactor(Resource):
     def get(self, speedFactor):
-        getDriver().setSpeedFactor(float(speedFactor))
+        if speedFactor == "inc":
+            getDriver().incSpeedFactor()
+        elif speedFactor == "dec":
+            getDriver().decSpeedFactor()
+        else:
+            getDriver().setSpeedFactor(float(speedFactor))
         return {'speedFactor': float(speedFactor)}  
 class Steer(Resource):
     def get(self, steer):
