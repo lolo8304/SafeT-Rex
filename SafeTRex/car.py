@@ -99,6 +99,9 @@ class CarStateMachine():
         self.setRUN(init)
         self.lastSTOP = 0
 
+    def getAngle(self):
+        return self.__state[1]
+
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]
@@ -119,6 +122,13 @@ class CarStateMachine():
 
     def setAngle(self, angle):
         self._car.steer(angle)
+
+    def left(self):
+        self.setAngle(self.getAngle()-2)
+
+    def left(self):
+        self.setAngle(self.getAngle()+2)
+
 
     def setREDLIGHT(self):
         print("Red Light")

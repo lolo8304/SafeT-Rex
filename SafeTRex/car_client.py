@@ -55,6 +55,10 @@ class CarStateMachine():
 
     def setAngle(self, angle):
         self.SetRemoteValue("steer", -angle)
+    def left(self):
+        self.SetRemoteValue("steer", "left")
+    def right(self):
+        self.SetRemoteValue("steer", "right")
 
     def setREDLIGHT(self):
         print("Red Light")
