@@ -39,9 +39,9 @@ class SpeedFactor(Resource):
 
 class Steer(Resource):
     def get(self, steer):
-        if steer == "left":
+        if steer == "left" or steer == "dec":
             getDriver().left()
-        elif steer == "right":
+        elif steer == "right" or steer == "inc":
             getDriver().right()
         else:
             getDriver().setAngle(int(steer))
