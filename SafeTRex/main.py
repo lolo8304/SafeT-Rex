@@ -23,11 +23,11 @@ class CarHandler:
         sr = StreamReader(self.__args)
         time.sleep(0.1)
 
-        sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
+        #sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
         lanes = threading.Thread(target=lanedetector, args=[sr, self.__driver])
 
-        print("Starting SignDetection Thread...")
-        sign.start()
+        #print("Starting SignDetection Thread...")
+        #sign.start()
         print("Starting LaneDetector Thread...")
         lanes.start()
         print("Starting StreamReader...")
