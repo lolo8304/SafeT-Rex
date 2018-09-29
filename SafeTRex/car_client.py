@@ -7,9 +7,12 @@ class CarStateMachine():
         self.__state = ("RUN", init)
         self.__url = url
         self.__recordingNo = recordingNo
-        self.__recordingFileName = ""
+        self.__recordingFile = ""
+        self.__recordingFileScript = ""
+        self.__lastTime = time.time()
         if (self.__recordingNo > 0):
             self.__recordingFile = open("safet-rex-recording-motor-"+str(self.__recordingNo)+".csv", "w+")
+            self.__recordingFileScript = open("safet-rex-recording-script-"+str(self.__recordingNo)+".csv", "w+")
         self.__simulate = simulate
         self.setRUN(init)
         self.lastSTOP = 0
@@ -17,7 +20,11 @@ class CarStateMachine():
     def SetRemoteValue(self, name, value):
         url = self.__url+'/'+name+"/"+str(value)
         if (self.__recordingNo > 0):
-            print (format(time.time(), '.2f'), ", ", name, ", ",value,", ", url, file=self.__recordingFile, flush=True)
+            t = time.time()
+            print (format(t, '.2f'), ", ", name, ", ",value,", ", url, file=self.__recordingFile, flush=True)
+            print ("echo sleep ", format((t - self.__lastTime), '.0f'), "; sleep ", format((t - self.__lastTime), '.0f'), file=self.__recordingFileScript, flush=True)
+            print ("echo ",url, "; wget ", url, file=self.__recordingFileScript, flush=True)
+            self.__lastTime = t
         if not self.__simulate:
             response = requests.get(url)
 

@@ -151,12 +151,12 @@ def get_lane_lines(color_image):
     # of the image
     (h, w) = color_image.shape[:2]
     #h = int(h / 2)
-    h3 = int(h / 4)
+    h3 = int(h / 3)
     #h3 = 0
     crop_img = color_image[0: h - h3, 0:w]
-    gray = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (17, 17), 0)
-    edged = cv2.Canny(blurred, 85, 85)
+    gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
+    edged = cv2.Canny(blurred[0: h - h3, 0:w], 85, 85)
 
 # with the arguments:
 # dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
@@ -168,7 +168,7 @@ def get_lane_lines(color_image):
 # maxLineGap: The maximum gap between two points to be considered in the same line.
     lines = []
     lines = hough_lines_detection(img=edged,
-                                rho=10,
+                                rho=1,
                                 theta=np.pi / 180,
                                 threshold=1,
                                 min_line_len=25,
@@ -182,10 +182,11 @@ def get_lane_lines(color_image):
         # if 'solid_lines' infer the two lane lines
         candidate_lines = []
         for line in detected_lines:
-                # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
-                # consider only lines with slope between 18 and 60 degrees
-                if 0.5 <= np.abs(line.slope) <= 3:
-                    candidate_lines.append(line)
+            line.draw(crop_img)
+            # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
+            # consider only lines with slope between 18 and 60 degrees
+            if 0.5 <= np.abs(line.slope) <= 3:
+                candidate_lines.append(line)
         # interpolate lines candidates to find both lanes
         left, right = compute_lane_from_candidates(candidate_lines, gray.shape)
         return crop_img, gray, blurred, edged, left, right
@@ -343,7 +344,7 @@ def allowedToSendToMotor(angle100):
     tdiff = t - lastMotorTime
     if lastMotorAngle != angle100:
         #printD("last=",lastMotorAngle, ", angle=", angle100, " ne=", lastMotorAngle != angle100)
-        if tdiff > 0.1:
+        if tdiff > 1:
             lastMotorAngle = angle100
             lastMotorTime = t
             return True
@@ -395,7 +396,7 @@ def detect_lane(image, debugFlag = False, driver = None):
         #printD("no crossed lines")
         return
 
-    #show_steering_angle(point, directionString, angle100, crop_img, 50)
+    show_steering_angle(point, directionString, angle100, crop_img, 50)
 
     new_element = smooth_directionX(directionString, angle100)
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
@@ -404,7 +405,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     #time.sleep(0.1)
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
-    #show_thumb("edge",edged, 2, 0)
-    #show_thumb("gray",gray, 4, 0)
-    #show_thumb("blurred",blurred, 0, 2)
+    #show_thumb("edge",edged, 1, 0)
+    #show_thumb("gray",gray, 2, 0)
+    #show_thumb("blurred",blurred, 0, 1)
 
