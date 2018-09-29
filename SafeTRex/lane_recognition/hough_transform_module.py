@@ -246,8 +246,9 @@ def steering_directionX(intersection_point, left, right, image, defaultW = 0):
 # divide by 8 regions each side, first 2 regions each side - straight
 # value between -45 - 45
 def steering_angle(directionX):
-    directionX100 = max(min(int(directionX * 45), 12), -12)
-    absStraightDistance = int(45 * 2 / 8)
+    maxAngle = 20
+    directionX100 = int(directionX * maxAngle)
+    absStraightDistance = int(maxAngle * 2 / 8)
     isStraight = abs(directionX100) <= absStraightDistance
     if isStraight:
         return "straight", directionX100
