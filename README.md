@@ -69,12 +69,47 @@ Open CV
 
 ![preparations](/hardware-car.jpg)
 
-# Solution
-
-## hardward
 
 
+# Our AA hack solution
+
+here is the first successful trial with lane detection - not perfect yet but a start.
+![Demo video with lane detection](/SafeT-Rex-1st-successful-trial.mp4)
+
+## highlevel architecture
+tbd
+
+## Hardware
+we are using our own car from the Prevention team
+
+### Motor solution
+tbd
+
+### Autonomous traffic lights with distance detector
+tbd
+
+### 3D printed STOP + 50 sign
+tbd
+
+### Our mobile test track
+tbd
+
+### Our dinos
+tbd
+
+## Autonomous mode and object detection
+tbd
+
+### STOP sign and speed 50 sign
+tbd
+
+### traffic lights detection
+tbd
+
+### Lane detector
+tbd
 
 ## traffic signs or others
 
 - [readme](/traffic-sign-solution-README.md) - version Lolo / not finished
+
