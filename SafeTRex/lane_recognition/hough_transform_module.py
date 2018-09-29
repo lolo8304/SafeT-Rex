@@ -246,7 +246,7 @@ def steering_directionX(intersection_point, left, right, image, defaultW = 0):
 # divide by 8 regions each side, first 2 regions each side - straight
 # value between -45 - 45
 def steering_angle(directionX):
-    maxAngle = 20
+    maxAngle = 12
     directionX100 = int(directionX * maxAngle)
     absStraightDistance = int(maxAngle * 2 / 8)
     isStraight = abs(directionX100) <= absStraightDistance
@@ -403,7 +403,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     sendToMotor(new_element[CONST_SMOOTH_ANGLE], driver)
 
-    time.sleep(0.02)
+    #time.sleep(0.02)
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 1, 0)

@@ -44,13 +44,14 @@ slower = "m"
 incSpeedFactor = "x"
 decSpeedFactor = "y"
 speedEdit = "e"
+stop = "k"
 quit = "q"
 
 driver = CarStateMachine(recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlimxyqse")
+    key = waitForKey(keys="jlikmxyqse")
     if (key == left):
       driver.left()
     elif key == right:
@@ -63,6 +64,9 @@ if __name__ == '__main__':
       driver.incSpeedFactor()
     elif key == decSpeedFactor:
       driver.decSpeedFactor()
+    elif key == stop:
+      driver.setRUN(0)
+      driver.setAngle(0)
     elif key == speedEdit:
       speed = input("Enter your speed (0-100)? ")
       driver.setRUN(int(speed))
