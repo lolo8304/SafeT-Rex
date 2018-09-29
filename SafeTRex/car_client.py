@@ -1,6 +1,6 @@
-import requests
+#import import requests
+from requests_futures.sessions import FuturesSession
 import time
-from requests import async
 
 class CarStateMachine():
     def __init__(self, url="http://192.168.6.107:5002", recording=0, init=30, simulate=False):
@@ -10,6 +10,7 @@ class CarStateMachine():
         self.__recordingFile = ""
         self.__recordingFileScript = ""
         self.__lastTime = time.time()
+        self.__futureSession = FuturesSession()
         if (self.__recordingNo > 0):
             self.__recordingFile = open("safet-rex-recording-motor-"+str(self.__recordingNo)+".csv", "w+")
             self.__recordingFileScript = open("safet-rex-recording-script-"+str(self.__recordingNo)+".csv", "w+")
@@ -27,14 +28,16 @@ class CarStateMachine():
             print ("echo ",url, "; wget ", url, file=self.__recordingFileScript, flush=True)
             self.__lastTime = t
         if not self.__simulate:
-            async.get(url)
+            future_one = self.__futureSession.get(url)
+            #requests.get(url)
 
     def SetRemoteCall(self, name):
         url = self.__url+'/'+name
         if (self.__recordingNo > 0):
             print (str(time.time()), ": ", url)
         if not self.__simulate:
-            async.get(url)
+            future_one = self.__futureSession.get(url)
+            #requests.get(url)
 
     def setRUN(self, tempo):
         if tempo == -1:
