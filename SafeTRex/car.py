@@ -116,7 +116,7 @@ class CarStateMachine():
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]
-        tempo = max(0, min(temp, 100))
+        tempo = max(0, min(tempo, 100))
         self._car.speed(tempo)
         self.__state = ("RUN", tempo)
 
