@@ -79,7 +79,7 @@ class StreamReader:
                 if os.path.exists(name):
                     os.remove(name)
                 self.__video = cv2.VideoWriter(name, cv2.VideoWriter_fourcc('h','2','6','4'), 10, (w,h))
-                atexit.register(releaseVideo, video)
+                atexit.register(releaseVideo, self.__video)
             self.__video.write(image)
 
 
