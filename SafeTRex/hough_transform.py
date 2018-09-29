@@ -27,7 +27,7 @@ camera = cv2.VideoCapture("lane_recognition/data/test_videos/test9.h264")
 time.sleep(0.1)
 video = None
 
-driver = CarStateMachine(recordingNo=args["recording"], init=0, simulate=True)
+driver = CarStateMachine(recording=args["recording"], init=0, simulate=True)
 
 def releaseVideo(video):
     video.release()
