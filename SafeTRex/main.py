@@ -5,6 +5,7 @@ import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import threading
+import os
 debug = True
 
 slow = 30
@@ -32,12 +33,15 @@ class CarHandler:
         print("Starting StreamReader...")
         sr.run()
 
+def releaseVideo(video):
+    video.release()
 
 
 class StreamReader:
     def __init__(self, args):
         self.__debug = args["debug"]
         self.__recordingNo = args["recording"]
+        self.__video = None
 
         #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
@@ -66,6 +70,19 @@ class StreamReader:
     def needsRecording(self):
         return self.__recordingNo > 0
 
+    def recordImage(self, image):
+        if self.needsRecording():
+            if self.__video is None:
+                name = "safet-rex-recording-"+str(self.recordingNo())+".h264"
+                print("start frame recording to ", name)
+                (h, w) = image.shape[:2]
+                if os.path.exists(name):
+                    os.remove(name)
+                self.__video = cv2.VideoWriter(name, cv2.VideoWriter_fourcc('h','2','6','4'), 10, (w,h))
+                atexit.register(releaseVideo, video)
+            self.__video.write(image)
+
+
     def run(self):
         time.sleep(1)
         for frame in self.__cam.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
@@ -75,6 +92,7 @@ class StreamReader:
             self.rawCapture.truncate(0)
             if self.isDebug():
                 # show the frame
+                img = self.getCurrentImage()
                 cv2.imshow("Frame", self.getCurrentImage())
         #while (True):
             #self.currentimage 
