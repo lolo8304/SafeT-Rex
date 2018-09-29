@@ -18,8 +18,14 @@ class Hello(Resource):
 
 class Speed(Resource):
     def get(self, speed):
-        getDriver().setRUN(int(speed))
-        return {'speed': int(speed)}  
+        if steer == "faster":
+            getDriver().faster()
+        elif steer == "slower":
+            getDriver().slower()
+        else:
+            getDriver().setRUN(int(speed))
+        return {'speed': getDriver().getSpeed()}  
+        
 class SpeedFactor(Resource):
     def get(self, speedFactor):
         if speedFactor == "inc":

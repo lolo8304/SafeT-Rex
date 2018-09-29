@@ -111,6 +111,12 @@ class CarStateMachine():
         self._car.speed(tempo)
         self.__state = ("RUN", tempo)
 
+    def faster(self):
+        self.setRun(self.getSpeed()+5)
+
+    def slower(self):
+        self.setRUN(self.getSpeed()-5)
+
     def setSTOP(self):
         print("STOPSIGN!!!!")
         if time.time() - self.lastSTOP > 30:
