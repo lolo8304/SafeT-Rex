@@ -74,7 +74,8 @@ Open CV
 # Our AA hack solution
 
 here is the first successful trial with lane detection - not perfect yet but a start.
-![Demo video with lane detection](/SafeT-Rex-1st-successful-trial.mp4)
+[![Watch the video](https://raw.github.com/lolo8304/SafeT-Rex/master/ressources/youtube-preview.png)](https://www.youtube.com/watch?v=79lioIJ-ZHQ)
+
 
 ## highlevel architecture
 tbd
