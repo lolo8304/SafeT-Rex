@@ -135,6 +135,8 @@ class CarStateMachine():
         self._car.incSpeedFactor()
     def decSpeedFactor(self):
         self._car.decSpeedFactor()
+    def getSpeedFactor(self):
+        return self._car.getSpeedFactor()
 
     def close(self):
         self._car.close()
