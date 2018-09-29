@@ -309,7 +309,7 @@ last_element = None
 
 def smooth_directionX(directionString, angle100):
     global last_element
-    #printD("----------------------------------")
+    printD("----------------------------------")
     new_element = [directionString, angle100, -1, directionString, angle100]
     if last_element is None:
         new_element[CONST_INC] = 1
@@ -317,17 +317,17 @@ def smooth_directionX(directionString, angle100):
     else:
         if last_element[CONST_DIR] == directionString:
             new_element[CONST_INC] = last_element[CONST_INC] + 1
-            #printD("SAME as before", new_element[CONST_INC])
+            printD("SAME as before", new_element[CONST_INC])
             if last_element[CONST_INC] < 6:
-                #printD("KEEP SMOOTH direction", last_element[CONST_INC])
+                printD("KEEP SMOOTH direction", last_element[CONST_INC])
                 new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
                 new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
             else:
-                #printD("ADAPT SMOOTH DIRECTION", new_element[CONST_SMOOTH_DIR])
+                printD("ADAPT SMOOTH DIRECTION", new_element[CONST_SMOOTH_DIR])
                 new_element[CONST_SMOOTH_DIR] = new_element[CONST_DIR]
                 new_element[CONST_SMOOTH_ANGLE] = new_element[CONST_ANGLE]
         else:
-            #rint ("NEW direction - KEEP SMOOTH direction")
+            print ("NEW direction - KEEP SMOOTH direction")
             new_element[CONST_INC] = 1
             new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
             new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
