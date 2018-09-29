@@ -343,7 +343,7 @@ def allowedToSendToMotor(angle100):
     tdiff = t - lastMotorTime
     if lastMotorAngle != angle100:
         #printD("last=",lastMotorAngle, ", angle=", angle100, " ne=", lastMotorAngle != angle100)
-        if tdiff > 0.5:
+        if tdiff > 0.1:
             lastMotorAngle = angle100
             lastMotorTime = t
             return True
@@ -375,14 +375,16 @@ def detect_lane(image, debugFlag = False, driver = None):
             drawLine(crop_img, right)
             directionString, angle100 = calculate_steering_angle(point, left, right, crop_img)
     elif isRationalLine(left):
-        virtual_horizon = Line(w, 0, w, h)
+        #virtual_horizon = Line(w, 0, w, h)
+        virtual_horizon = Line(0, 0, w, 0)
         crossed, point = line_intersection2(left, virtual_horizon)
         if crossed:
             drawLine(crop_img, left)
             drawLine(crop_img, virtual_horizon)
             directionString, angle100 = calculate_steering_angle(point, left, virtual_horizon, crop_img)
     elif isRationalLine(right):
-        virtual_horizon = Line(0, 0, 0, h)
+        #virtual_horizon = Line(0, 0, 0, h)
+        virtual_horizon = Line(0, 0, w, 0)
         crossed, point = line_intersection2(right, virtual_horizon)
         if crossed:
             drawLine(crop_img, virtual_horizon)

@@ -17,7 +17,7 @@ class CarStateMachine():
     def SetRemoteValue(self, name, value):
         url = self.__url+'/'+name+"/"+str(value)
         if (self.__recordingNo > 0):
-            print (format(time.time(), '.2f'), ", ", url, file=self.__recordingFile, flush=True)
+            print (format(time.time(), '.2f'), ", ", name, ", ",value,", ", url, file=self.__recordingFile, flush=True)
         if not self.__simulate:
             response = requests.get(url)
 
