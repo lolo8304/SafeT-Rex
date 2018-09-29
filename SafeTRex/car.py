@@ -80,10 +80,10 @@ class ServoCar(object):
         self.__speedFactor = value
     def incSpeedFactor(self):
         print("CAR: inc Speed factor by 0.05")
-        self.__speedFactor = self.__speedFactor + 0.05
+        self.__speedFactor = self.__speedFactor + 0.2
     def decSpeedFactor(self):
         print("CAR: dec Speed factor by 0.05")
-        self.__speedFactor = self.__speedFactor - 0.05
+        self.__speedFactor = self.__speedFactor - 0.2
 
     def getSpeedFactor(self):
         return self.__speedFactor
