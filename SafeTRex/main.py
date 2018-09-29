@@ -15,7 +15,7 @@ right = 30
 class CarHandler:
     def __init__(self, args):
         self.__args = args
-        self.__driver = CarStateMachine(30)
+        self.__driver = CarStateMachine(recording=args["recording"], init=30)
 
     def start(self):
         self.__driver.setRUN(30)
@@ -37,6 +37,8 @@ class CarHandler:
 class StreamReader:
     def __init__(self, args):
         self.__debug = args["debug"]
+        self.__recordingNo = args["recording"]
+
         #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
         self.__cam.resolution = (320, 240)
@@ -58,6 +60,11 @@ class StreamReader:
 
     def isDebug(self):
         return self.__debug
+
+    def recordingNo(self):
+        return self.__recordingNo
+    def needsRecording(self):
+        return self.__recordingNo > 0
 
     def run(self):
         time.sleep(1)
