@@ -41,7 +41,7 @@ def releaseVideo(video):
 #for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
 while(True):
-    time.sleep(0.01)
+    time.sleep(0.0625) # 16 frames / s
     #image = frame.array
     ret, image = camera.read()
     if (image is not None):

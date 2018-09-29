@@ -46,7 +46,7 @@ decSpeedFactor = "y"
 speedEdit = "e"
 quit = "q"
 
-driver = CarStateMachine(recording=args["recording"], init=0, simulate=False)
+driver = CarStateMachine(recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
