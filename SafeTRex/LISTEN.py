@@ -28,7 +28,7 @@ class SpeedFactor(Resource):
             getDriver().decSpeedFactor()
         else:
             getDriver().setSpeedFactor(float(speedFactor))
-        return {'speedFactor': float(speedFactor)}  
+        return {'speedFactor': getDriver().getSpeedFactor()}  
 class Steer(Resource):
     def get(self, steer):
         getDriver().setAngle(int(steer))

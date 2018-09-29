@@ -85,6 +85,9 @@ class ServoCar(object):
         print("CAR: dec Speed factor by 0.05")
         self.__speedFactor = self.__speedFactor - 0.05
 
+    def getSpeedFactor(self):
+        return self.__speedFactor
+
     def close(self):
         self.__steer.close()
         self.__speed.close()
