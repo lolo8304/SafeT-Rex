@@ -139,7 +139,7 @@ class CarStateMachine():
         angle = max(-45, min(angle, 45))
         self.__stateAngle = ("ANGLE", angle)
         self._car.steer(angle)
-        self.setRUN(self.getSpeed() + this.speedAdaption(angle))
+        self.setRUN(self.getSpeed() + self.speedAdaption(angle))
 
     def left(self):
         self.setAngle(self.getAngle()+5)
