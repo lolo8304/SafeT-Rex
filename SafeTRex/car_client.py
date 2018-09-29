@@ -67,6 +67,7 @@ class CarStateMachine():
 
     def setSpeedFactor(self, value):
         self.SetRemoteValue("speedFactor", format(value, '.2f'))
+        self.setRUN(-1)
 
     def incSpeedFactor(self):
         self.SetRemoteCall("incSpeedFactor")
