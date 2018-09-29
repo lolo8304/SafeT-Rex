@@ -109,7 +109,9 @@ class CarStateMachine():
         ## angles = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
         ## speed inc 5 per 5 degree
         oldSpeed = self.getAngle()
-        return (abs(newAngle) - abs(oldSpeed)) / 9
+        adapt = (abs(newAngle) - abs(oldSpeed)) // 9
+        print("adapt speed by ",adapt)
+        return adapt
 
     def setRUN(self, tempo):
         if tempo == -1:
