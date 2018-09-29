@@ -18,7 +18,7 @@ ap.add_argument("-r", "--recording", required=False, type=int, default=0,
 	help="number to write files accordinly")
 args = vars(ap.parse_args())
 
-camera = cv2.VideoCapture("lane_recognition/data/test_videos/test9.h264")
+camera = cv2.VideoCapture("lane_recognition/data/test_videos/test-recording-1.h264")
 
 #camera = PiCamera()
 #camera.resolution = (320, 240)

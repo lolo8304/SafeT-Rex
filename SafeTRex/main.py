@@ -45,12 +45,13 @@ class StreamReader:
 
         #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
-        self.__cam.resolution = (320, 240)
+        dim = (640, 480)
+        self.__cam.resolution = dim
         self.__cam.framerate = 16
         time.sleep(0.1)
         self.currentimage = None
 
-        self.rawCapture = PiRGBArray(self.__cam, size=(320, 240))
+        self.rawCapture = PiRGBArray(self.__cam, size=dim)
 
 
         #ret, self.currentimage = self.__cam.read()
