@@ -99,6 +99,7 @@ class CarStateMachine():
         self.__stateAngle = ("ANGLE", 0)
         self._car = ServoCar()
         self.setRUN(init)
+        self.setAngle(0)
         self.lastSTOP = 0
 
     def getAngle(self):
