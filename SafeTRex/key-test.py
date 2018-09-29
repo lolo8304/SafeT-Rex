@@ -42,14 +42,15 @@ left = "j"
 right = "l"
 faster = "i"
 slower = "m"
-speedFacter = " "
+incSpeedFactor = "s"
+decSpeedFactor = "a"
 quit = "q"
 
 driver = CarStateMachine(recording=args["recording"], init=0, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlim q")
+    key = waitForKey(keys="jlimasq")
     if (key == left):
       driver.left()
     elif key == right:
@@ -58,8 +59,10 @@ if __name__ == '__main__':
       driver.faster()
     elif key == slower:
       driver.slower()
-    elif key == speedFacter:
+    elif key == incSpeedFactor:
       driver.incSpeedFactor()
+    elif key == decSpeedFactor:
+      driver.decSpeedFactor()
     elif key == quit:
       driver.setRUN(0)
       driver.setAngle(0)
