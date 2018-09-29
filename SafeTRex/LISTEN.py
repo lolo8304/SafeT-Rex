@@ -18,9 +18,9 @@ class Hello(Resource):
 
 class Speed(Resource):
     def get(self, speed):
-        if speed == "faster":
+        if speed == "faster" or speed == "inc":
             getDriver().faster()
-        elif speed == "slower":
+        elif speed == "slower" or speed = "dec":
             getDriver().slower()
         else:
             getDriver().setRUN(int(speed))
