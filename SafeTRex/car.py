@@ -128,10 +128,10 @@ class CarStateMachine():
         self._car.steer(angle)
 
     def left(self):
-        self.setAngle(self.getAngle()-5)
+        self.setAngle(self.getAngle()+5)
 
     def right(self):
-        self.setAngle(self.getAngle()+5)
+        self.setAngle(self.getAngle()-5)
 
     def setREDLIGHT(self):
         print("Red Light")
