@@ -41,6 +41,12 @@ class CarStateMachine():
         self.SetRemoteValue("speed", tempo)
         self.__state = ("RUN", tempo)
 
+    def faster(self):
+        self.SetRemoteValue("speed", "faster")
+    def slower(self):
+        self.SetRemoteValue("speed", "slower")
+
+
     def setSTOP(self):
         print("STOPSIGN!!!!")
         if time.time() - self.lastSTOP > 2:

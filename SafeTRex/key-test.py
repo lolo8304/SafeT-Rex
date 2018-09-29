@@ -48,4 +48,11 @@ if __name__ == '__main__':
   while(True):
     key = waitForKey(keys="jlim")
     if (key == left):
-      driver
+      driver.left()
+    elif key == right:
+      driver.right()
+    elif key == faster:
+      driver.faster()
+    elif key == slower:
+      driver.slower()
+
