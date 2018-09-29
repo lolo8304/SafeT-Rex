@@ -105,6 +105,12 @@ class CarStateMachine():
     def getSpeed(self):
         return self.__state[1]
 
+    def speedAdaption(self, newSpeed):
+        angles = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
+        speedFactor = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
+        newSpeed // 5 * 5
+        oldSpeed = self.getSpeed()
+
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]

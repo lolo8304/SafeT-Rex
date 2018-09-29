@@ -61,6 +61,7 @@ class CarStateMachine():
 
     def setAngle(self, angle):
         self.SetRemoteValue("steer", -angle)
+        
     def left(self):
         self.SetRemoteValue("steer", "left")
     def right(self):
@@ -79,9 +80,9 @@ class CarStateMachine():
         self.SetRemoteValue("speedFactor", format(value, '.2f'))
 
     def incSpeedFactor(self):
-        self.SetRemoteCall("incSpeedFactor")
+        self.SetRemoteValue("speedFactor", "inc")
     def decSpeedFactor(self):
-        self.SetRemoteCall("decSpeedFactor")
+        self.SetRemoteValue("speedFactor", "dec")
 
     def close(self):
         pass
