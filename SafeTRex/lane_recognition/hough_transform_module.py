@@ -402,7 +402,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     sendToMotor(new_element[CONST_SMOOTH_ANGLE], driver)
 
-    #time.sleep(0.1)
+    time.sleep(0.05)
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 1, 0)
