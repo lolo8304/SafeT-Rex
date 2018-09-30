@@ -91,13 +91,13 @@ class StreamReader:
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
             self.currentimage = frame.array
-            self.rawCapture.truncate(0)
             img = self.getCurrentImage()
             self.recordImage(img)
             if self.isDebug():
                 # show the frame
                 cv2.imshow("Frame", img)
 
+            self.rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
