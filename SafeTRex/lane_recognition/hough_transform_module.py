@@ -168,8 +168,9 @@ def get_lane_lines(color_image):
     #h3 = 0
     crop_img = color_image[0: h - h3, 0:w]
     gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
-    gray_flip = cv2.flip(gray, flipCode=1)
+    gray_flip = cv2.flip(gray[0: h - h3, 0:w], flipCode=1)
     blurred = cv2.GaussianBlur(gray_flip[0: h - h3, 0:w], (17, 17), 0)
+    #blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
     edged = cv2.Canny(blurred[0: h - h3, 0:w], 85, 85)
 
 # with the arguments:
@@ -471,6 +472,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 1, 0)
+    #show_thumb("gray",gray, 0, 1)
     #show_thumb("gray",gray, 0, 1)
     #show_thumb("blurred",blurred, 1, 1)
 
