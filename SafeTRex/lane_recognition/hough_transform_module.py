@@ -298,16 +298,17 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     right_degree = -right.degree()
     deg = left_degree - right_degree
     print("degree =", str(deg), " left=", left_degree, " right=", right_degree)
+    inc = 3
     if left_degree == 0:
         #no line visible on left side, seems to be too far right -> go left
-        return "left-inc", 5
+        return "left-inc", inc
     elif right_degree == 0:
         #no line visible on right side, seems to be too far right -> go right
-        return "right-inc", 5
+        return "right-inc", inc
     elif (left_degree > right_degree + 10):
-        return "left-inc", 5
+        return "left-inc", inc
     elif (right_degree > left_degree + 10):
-        return "right-inc", 5
+        return "right-inc", inc
     else:
         return "straight", 0
 
