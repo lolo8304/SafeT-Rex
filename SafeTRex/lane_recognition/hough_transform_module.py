@@ -234,11 +234,11 @@ def line_intersection(line1, line2):
     y = det(d, ydiff) / div
     return True, (x, y)
 
-def drawLine(crop_img, line):
-    #printD("(x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
+def drawLine(crop_img, line, color=(0,255,0)):
+    printD("(x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
     if isRationalLine(line):
         if isDebug():
-            cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),(0,255,0),10)
+            cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,10)
 
 # from -1.0 via 0 to 1.0 (left to right)
 def steering_directionX(intersection_point, left, right, image, defaultW = 0):
@@ -305,9 +305,9 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     elif right_degree == 0:
         #no line visible on right side, seems to be too far right -> go right
         return "right-inc", inc
-    elif (left_degree > right_degree + 10):
+    elif (left_degree > right_degree + 6):
         return "left-inc", inc
-    elif (right_degree > left_degree + 10):
+    elif (right_degree > left_degree + 6):
         return "right-inc", inc
     else:
         return "straight", 0
@@ -434,17 +434,17 @@ def detect_lane(image, debugFlag = False, driver = None):
     if (isRationalLine(left) and isRationalLine(right)):
         crossed, point = line_intersection2(left, right)
         if (crossed):
-            drawLine(crop_img, left)
-            drawLine(crop_img, right)
+            drawLine(crop_img, left, (0,0,255))
+            drawLine(crop_img, right, (0,255,0))
             directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
     elif isRationalLine(left):
         #virtual_horizon = Line(w, 0, w, h)
         virtual_horizon = Line(0, 0, w, 0)
         crossed, point = line_intersection2(left, virtual_horizon)
         if crossed:
-            drawLine(crop_img, left)
+            drawLine(crop_img, left, (0,0,255))
             virtual_horizon = Line(point[0], 0, point[0], h)
-            drawLine(crop_img, virtual_horizon)
+            drawLine(crop_img, virtual_horizon, (0,255,0))
             directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
     elif isRationalLine(right):
         #virtual_horizon = Line(0, 0, 0, h)
@@ -452,8 +452,8 @@ def detect_lane(image, debugFlag = False, driver = None):
         crossed, point = line_intersection2(right, virtual_horizon)
         if crossed:
             virtual_horizon = Line(point[0], 0, point[0], h)
-            drawLine(crop_img, virtual_horizon)
-            drawLine(crop_img, right)
+            drawLine(crop_img, virtual_horizon, (0,0,255))
+            drawLine(crop_img, right, (0,255,0))
             directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
 
     if not crossed:
