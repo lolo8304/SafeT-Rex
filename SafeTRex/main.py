@@ -45,7 +45,7 @@ class StreamReader:
 
         #self.__cam = cv2.VideoCapture(0)
         self.__cam = PiCamera()
-        dim = (640, 480)
+        dim = (320, 240)
         self.__cam.resolution = dim
         self.__cam.framerate = 16
         time.sleep(0.1)
