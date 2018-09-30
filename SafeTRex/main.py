@@ -81,7 +81,8 @@ class StreamReader:
                     os.remove(name)
                 self.__video = cv2.VideoWriter(name, cv2.VideoWriter_fourcc('h','2','6','4'), 10, (w,h))
                 atexit.register(releaseVideo, self.__video)
-            self.__video.write(image)
+            gray_flip = cv2.flip(image, flipCode=1)
+            self.__video.write(gray_flip)
 
 
     def run(self):
