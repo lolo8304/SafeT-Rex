@@ -165,7 +165,7 @@ def get_lane_lines(color_image):
     # of the image
     (h, w) = color_image.shape[:2]
     #h = int(h / 2)
-    h3 = int(h / 3)
+    h3 = int(h / 4)
     #h3 = 0
     crop_img = color_image[0: h - h3, 0:w]
     gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
@@ -455,7 +455,7 @@ def detect_lane(image, debugFlag = False, driver = None):
     elif isRationalLine(right):
         #virtual_horizon = Line(0, 0, 0, h)
         virtual_horizon = Line(0, 0, w, 0)
-        crossed, point = line_intersection2(right, virtual_horizon)
+        crossed, point = line_intersection2(virtual_horizon, right)
         if crossed:
             virtual_horizon = Line(point[0], 0, point[0], h)
             drawLine(crop_img, virtual_horizon, (0,0,255))
