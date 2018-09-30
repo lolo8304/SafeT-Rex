@@ -4,7 +4,9 @@
 import time
 import cv2
 import numpy as np
-import math
+from math import atan2
+from math import atan
+from math import degrees
 from collections import deque
 
 
@@ -52,9 +54,20 @@ class Line:
 
         cv2.line(img, (self.x1, self.y1), (self.x2, self.y2), color, thickness)
 
+    def degree(self):
+        if self.slope < 1.0e+10:
+            # - because of missorientation of y1,y2 - origin - left, top
+            tangent_angle = -degrees(atan(self.slope))
+            if tangent_angle > 0:
+                return 90 - tangent_angle
+            else:
+                return -90 - tangent_angle
+        else:
+            return 0
+
     # see https://www.youtube.com/watch?v=O8M4ZErxE-M
     def degree_between(self, line): 
-        return degrees(atan2(self.slope, line.slope))
+        return self.degree() - line.degree()
 
         
 
@@ -246,7 +259,7 @@ def steering_directionX(intersection_point, left, right, image, defaultW = 0):
 # divide by 8 regions each side, first 2 regions each side - straight
 # value between -45 - 45
 def steering_angle(directionX):
-    maxAngle = 12
+    maxAngle = 15
     directionX100 = int(directionX * maxAngle)
     absStraightDistance = int(maxAngle * 2 / 8)
     isStraight = abs(directionX100) <= absStraightDistance
@@ -266,14 +279,38 @@ def show_steering_angle(point, directionString, angle100, crop_img, offset = 0):
             cv2.putText(crop_img, directionString+","+str(angle100), (int(w/2)-30, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
         elif directionString == "left":
             cv2.putText(crop_img, directionString+","+str(angle100), (30, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
-        else:
+        elif directionString == "left-inc":
+            cv2.putText(crop_img, directionString+","+str(angle100), (30, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        elif directionString == "right":
             cv2.putText(crop_img, directionString+","+str(angle100), (w-140, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        else:
+            cv2.putText(crop_img, directionString+","+str(angle100), (w-160, 30+offset), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
 
 def calculate_steering_angle(point, left, right, crop_img):
     directionX = steering_directionX( point, left, right, crop_img)
     directionString, angle100 = steering_angle(directionX)
     #printD("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
     return directionString, angle100
+
+## https://steemit.com/mathematics/@mes/video-notes-angle-between-two-lines-formula-in-terms-of-slopes
+def calculate_steering_angle_from_single_line(point, left, right, crop_img):
+    left_degree = left.degree()
+    right_degree = -right.degree()
+    deg = left_degree - right_degree
+    print("degree =", str(deg), " left=", left_degree, " right=", right_degree)
+    if left_degree == 0:
+        #no line visible on left side, seems to be too far right -> go left
+        return "left-inc", 5
+    elif right_degree == 0:
+        #no line visible on right side, seems to be too far right -> go right
+        return "right-inc", 5
+    elif (left_degree > right_degree + 10):
+        return "left-inc", 5
+    elif (right_degree > left_degree + 10):
+        return "right-inc", 5
+    else:
+        return "straight", 0
+
 
 def test():
   testL = Line(0, 360, 240, 0)
@@ -309,7 +346,7 @@ last_element = None
 
 def smooth_directionX(directionString, angle100):
     global last_element
-    printD("----------------------------------")
+    #printD("----------------------------------")
     new_element = [directionString, angle100, -1, directionString, angle100]
     if last_element is None:
         new_element[CONST_INC] = 1
@@ -317,17 +354,17 @@ def smooth_directionX(directionString, angle100):
     else:
         if last_element[CONST_DIR] == directionString:
             new_element[CONST_INC] = last_element[CONST_INC] + 1
-            printD("SAME as before", new_element[CONST_INC])
+            #printD("SAME as before", new_element[CONST_INC])
             if last_element[CONST_INC] < 6:
-                printD("KEEP SMOOTH direction", last_element[CONST_INC])
+                #printD("KEEP SMOOTH direction", last_element[CONST_INC])
                 new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
                 new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
             else:
-                printD("ADAPT SMOOTH DIRECTION", new_element[CONST_SMOOTH_DIR])
+                #printD("ADAPT SMOOTH DIRECTION", new_element[CONST_SMOOTH_DIR])
                 new_element[CONST_SMOOTH_DIR] = new_element[CONST_DIR]
                 new_element[CONST_SMOOTH_ANGLE] = new_element[CONST_ANGLE]
         else:
-            print ("NEW direction - KEEP SMOOTH direction")
+            #rint ("NEW direction - KEEP SMOOTH direction")
             new_element[CONST_INC] = 1
             new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
             new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
@@ -351,13 +388,36 @@ def allowedToSendToMotor(angle100):
             return True
     return False
 
-
-
 def sendToMotor(angle100, driver = None):
     if allowedToSendToMotor(angle100):
         printD("send to motor ", angle100)
         if driver is not None:
             driver.setAngle(angle100)
+
+def allowedToSendIncrementToMotor():
+    global lastMotorTime
+    t = time.time()
+    tdiff = t - lastMotorTime
+    if tdiff > 0.5:
+        lastMotorTime = t
+        return True
+    return False
+
+
+def sendIncrementToMotor(directionX, angle100, driver = None):
+    if allowedToSendIncrementToMotor():
+        if directionX == "left-inc":
+            printD("send left to motor ", angle100)
+            if driver is not None:
+                driver.left()
+        elif directionX == "right-inc":
+            printD("send left to motor ", angle100)
+            if driver is not None:
+                driver.right()
+        else:
+            printD("send to motor ", angle100)
+            if driver is not None:
+                driver.setAngle(angle100)
 
 
 def detect_lane(image, debugFlag = False, driver = None):
@@ -375,33 +435,35 @@ def detect_lane(image, debugFlag = False, driver = None):
         if (crossed):
             drawLine(crop_img, left)
             drawLine(crop_img, right)
-            directionString, angle100 = calculate_steering_angle(point, left, right, crop_img)
+            directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
     elif isRationalLine(left):
         #virtual_horizon = Line(w, 0, w, h)
         virtual_horizon = Line(0, 0, w, 0)
         crossed, point = line_intersection2(left, virtual_horizon)
         if crossed:
             drawLine(crop_img, left)
+            virtual_horizon = Line(point[0], 0, point[0], h)
             drawLine(crop_img, virtual_horizon)
-            directionString, angle100 = calculate_steering_angle(point, left, virtual_horizon, crop_img)
+            directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
     elif isRationalLine(right):
         #virtual_horizon = Line(0, 0, 0, h)
         virtual_horizon = Line(0, 0, w, 0)
         crossed, point = line_intersection2(right, virtual_horizon)
         if crossed:
+            virtual_horizon = Line(point[0], 0, point[0], h)
             drawLine(crop_img, virtual_horizon)
             drawLine(crop_img, right)
-            directionString, angle100 = calculate_steering_angle(point, virtual_horizon, right, crop_img)
+            directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
 
     if not crossed:
         #printD("no crossed lines")
         return
 
-    show_steering_angle(point, directionString, angle100, crop_img, 50)
+    #show_steering_angle(point, directionString, angle100, crop_img, 50)
 
     new_element = smooth_directionX(directionString, angle100)
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
-    sendToMotor(new_element[CONST_SMOOTH_ANGLE], driver)
+    sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
     #time.sleep(0.02)
     if isDebug():
