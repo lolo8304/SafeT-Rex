@@ -412,7 +412,7 @@ def sendIncrementToMotor(directionX, angle100, driver = None):
             if driver is not None:
                 driver.left()
         elif directionX == "right-inc":
-            printD("send left to motor ", angle100)
+            printD("send right to motor ", angle100)
             if driver is not None:
                 driver.right()
         else:
