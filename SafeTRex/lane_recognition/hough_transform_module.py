@@ -8,7 +8,7 @@ from math import atan2
 from math import atan
 from math import degrees
 from collections import deque
-
+from os import uname
 
 
 
@@ -79,6 +79,7 @@ CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
 startTime = time.time()
+isRaspi = os.uname()[4][:3] == "arm"
 
 def printD(*objects):
     global startTime
@@ -160,6 +161,7 @@ def isRationalLine(line):
     return line and isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
 
 def get_lane_lines(color_image):
+    global isRaspi
     # grab the dimensions of the image and calculate the center
     # of the image
     (h, w) = color_image.shape[:2]
@@ -168,9 +170,11 @@ def get_lane_lines(color_image):
     #h3 = 0
     crop_img = color_image[0: h - h3, 0:w]
     gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
-    gray_flip = cv2.flip(gray[0: h - h3, 0:w], flipCode=1)
-    blurred = cv2.GaussianBlur(gray_flip[0: h - h3, 0:w], (17, 17), 0)
-    #blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
+    if isRaspi:
+        gray_flip = cv2.flip(gray[0: h - h3, 0:w], flipCode=1)
+        blurred = cv2.GaussianBlur(gray_flip[0: h - h3, 0:w], (17, 17), 0)
+    else:
+        blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
     edged = cv2.Canny(blurred[0: h - h3, 0:w], 85, 85)
 
 # with the arguments:
