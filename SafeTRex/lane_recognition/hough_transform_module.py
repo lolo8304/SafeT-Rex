@@ -8,8 +8,7 @@ from math import atan2
 from math import atan
 from math import degrees
 from collections import deque
-from os import uname
-
+import os
 
 
 class Line:
