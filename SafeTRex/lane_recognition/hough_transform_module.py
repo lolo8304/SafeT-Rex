@@ -432,7 +432,7 @@ def allowedToSendToMotor(angle100):
     tdiff = t - lastMotorTime
     if lastMotorAngle != angle100:
         printD("last=",lastMotorAngle, ", angle=", angle100, " ne=", lastMotorAngle != angle100)
-        if tdiff > 1:
+        if tdiff > 0.6:
             lastMotorAngle = angle100
             lastMotorTime = t
             return True
