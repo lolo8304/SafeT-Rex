@@ -126,10 +126,10 @@ class CarStateMachine():
         self.__state = ("RUN", tempo)
 
     def faster(self):
-        self.setRUN(self.getSpeed()+5)
+        self.setRUN(self.getSpeed()+10)
 
     def slower(self):
-        self.setRUN(self.getSpeed()-5)
+        self.setRUN(self.getSpeed()-10)
 
     def setSTOP(self):
         print("STOPSIGN!!!!")
@@ -151,10 +151,10 @@ class CarStateMachine():
         self.setRUN(self.getSpeed() + adaptSpeed)
 
     def left(self):
-        self.setAngle(self.getAngle()+5)
+        self.setAngle(self.getAngle()+10)
 
     def right(self):
-        self.setAngle(self.getAngle()-5)
+        self.setAngle(self.getAngle()-10)
 
     def setREDLIGHT(self):
         print("Red Light")
