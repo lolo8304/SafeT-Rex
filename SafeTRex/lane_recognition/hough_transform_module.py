@@ -473,7 +473,7 @@ def sendIncrementToMotor(directionX, angle100, driver = None):
 def detect_lane(image, debugFlag = False, driver = None):
     global inc 
     setDebug(debugFlag)
-    printD("------------")
+    #printD("------------")
     crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
     (h, w) = crop_img.shape[:2]
 
