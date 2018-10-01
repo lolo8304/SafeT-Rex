@@ -64,17 +64,16 @@ class Line:
     def degree(self):
         if self.slope < 1.0e+10:
             # - because of missorientation of y1,y2 - origin - left, top
-            tangent_angle = -degrees(atan(self.slope))
-            if tangent_angle > 0:
-                return 90 - tangent_angle
-            else:
-                return -90 - tangent_angle
+            tangent_angle = degrees(atan(self.slope))
+            if self.y2 < self.y1:
+                tangent_angle = -tangent_angle
+            return 90 - tangent_angle
         else:
             return 0
 
     # see https://www.youtube.com/watch?v=O8M4ZErxE-M
     def degree_between(self, line): 
-        return self.degree() - line.degree()
+        return self.degree() + line.degree()
 
         
 
@@ -337,8 +336,9 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     (h, w) = crop_img.shape[:2]
 
     left_degree = left.degree()
-    right_degree = -right.degree()
-    deg = left_degree - right_degree
+    right_degree = right.degree()
+    deg = left.degree_between(right)
+
     printD("degree =", str(deg), " left=", left_degree, " right=", right_degree)
     inc = 3
     if left_degree == 0:
@@ -356,7 +356,6 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     elif (right_degree > left_degree + 10):
         p1 = ( right.fx(0), 0)
         drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
-        key = cv2.waitKey(0) & 0xFF
         return "right-inc", inc
     else:
         cv2.circle(crop_img, point, 20, (0,0,255), -1)
