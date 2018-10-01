@@ -517,8 +517,8 @@ def detect_lane(image, debugFlag = False, driver = None):
     sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
     #time.sleep(0.02)
-    if isDebug():
-        show_thumb("crop",crop_img, 0, 0)
+    #if isDebug():
+    show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 1, 0)
     #show_thumb("gray",gray, 0, 1)
     #show_thumb("gray",gray, 0, 1)
