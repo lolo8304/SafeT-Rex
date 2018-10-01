@@ -448,7 +448,7 @@ def allowedToSendIncrementToMotor():
     global lastMotorTime
     t = time.time()
     tdiff = t - lastMotorTime
-    if tdiff > 0.5:
+    if tdiff > 1:
         lastMotorTime = t
         return True
     return False
