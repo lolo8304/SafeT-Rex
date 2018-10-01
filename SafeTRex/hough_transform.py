@@ -59,7 +59,7 @@ while(True):
 
         detect_lane(image, args["debug"], driver)
 
-    key = cv2.waitKey(0) & 0xFF
+    key = cv2.waitKey(1) & 0xFF
     if (key != 255):
         print("key=",key)
     if key == ord("q"):
