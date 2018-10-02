@@ -459,7 +459,7 @@ def allowedToSendToMotor(angle100):
     tdiff = t - lastMotorTime
     if lastMotorAngle != angle100:
         printD("last=",lastMotorAngle, ", angle=", angle100, " ne=", lastMotorAngle != angle100)
-        if tdiff > 0.6:
+        if tdiff > 0.5:
             lastMotorAngle = angle100
             lastMotorTime = t
             return True
@@ -558,7 +558,7 @@ def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
-    #time.sleep(0.02)
+    time.sleep(0.02)
     if isDebug():
         show_thumb("crop",crop_img, 0, 0)
     #show_thumb("edge",edged, 1, 0)
