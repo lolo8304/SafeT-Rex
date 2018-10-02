@@ -16,4 +16,4 @@ class LineDetector():
         while(True):
             image  = self.__sr.getCurrentImage()
             detect_lane(image, self.__sr.isDebug(), self.__sr.isXDebug(), self.__driver)
-            time.sleep(0.1)
+            time.sleep(0.5)
