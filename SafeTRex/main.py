@@ -40,6 +40,7 @@ def releaseVideo(video):
 class StreamReader:
     def __init__(self, args):
         self.__debug = args["debug"]
+        self.__xdebug = args["xdebug"]
         self.__recordingNo = args["recording"]
         self.__video = None
 
@@ -65,6 +66,8 @@ class StreamReader:
 
     def isDebug(self):
         return self.__debug
+    def isXDebug(self):
+        return self.__xdebug
 
     def recordingNo(self):
         return self.__recordingNo

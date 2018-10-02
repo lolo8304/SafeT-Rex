@@ -14,6 +14,8 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", required=False, type=bool, default=False,
 	help="debug mode")
+ap.add_argument("-x", "--xdebug", required=False, type=bool, default=False,
+	help="X debug mode")
 ap.add_argument("-r", "--recording", required=False, type=int, default=0,
 	help="number to write files accordinly")
 ap.add_argument("-v", "--video", required=False, default=None,
@@ -57,11 +59,12 @@ while(True):
                 atexit.register(releaseVideo, video)
             video.write(image)
 
-        detect_lane(image, args["debug"], driver)
+        detect_lane(image, args["debug"], args["xdebug"], driver)
 
     key = cv2.waitKey(0) & 0xFF
     if (key != 255):
-        print("key=",key)
+        pass
+        #print("key=",key)
     if key == ord("q"):
         break
 

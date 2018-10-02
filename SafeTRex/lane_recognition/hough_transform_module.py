@@ -84,23 +84,32 @@ CARD_WRAP_LONG_MAX = 640
 CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
+xdebug = False
 startTime = time.time()
 isRaspi = os.uname()[4][:3] == "arm"
 
 def printD(*objects):
     global startTime
     t = time.time() - startTime
-    print(format(t, '.2f'), end="")
+    print(format(t, '.2f'), ": ", end="")
     print(objects)
+
+def printXD(*objects):
+    if (isXDebug()):
+        printD(objects)
 
 
 def isDebug():
     global debug
     return debug
+def isXDebug():
+    global xdebug
+    return xdebug
 
-def setDebug(flag):
-    global debug
-    debug = flag
+def setDebug(dFlag, xdFlag):
+    global debug, xdebug
+    debug = dFlag
+    xdebug = xdFlag
 
 def show_thumb(name, image, x_index, y_index):
     """show tumbnail on screen to debug image pipeline"""
@@ -249,7 +258,7 @@ def line_intersection(line1, line2):
     return True, (x, y)
 
 def drawLine(crop_img, line, color=(0,255,0), text=""):
-    printD(text," (x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
+    printXD(text," (x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
     if isRationalLine(line):
         if isDebug():
             cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,10)
@@ -313,7 +322,7 @@ def show_steering_angle(point, directionString, angle100, crop_img, offset = 0):
 def calculate_steering_angle(point, left, right, crop_img):
     directionX = steering_directionX( point, left, right, crop_img)
     directionString, angle100 = steering_angle(directionX, crop_img)
-    printD("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
+    printXD("direction = ", directionString, " ", angle100, " crossed x=", point[0], " y=", point[1])
     return directionString, angle100
 
 def drawArray(crop_img, point, directionX, color):
@@ -339,7 +348,7 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     right_degree = right.degree()
     deg = left.degree_between(right)
 
-    printD("degree =", str(deg), " left=", left_degree, " right=", right_degree)
+    printXD("degree =", str(deg), " left=", left_degree, " right=", right_degree)
     inc = 3
     if left_degree == 0:
         #no line visible on left side, seems to be too far right -> go left
@@ -396,7 +405,7 @@ last_element = None
 
 def smooth_directionX(directionString, angle100):
     global last_element
-    #printD("----------------------------------")
+    printXD("----------------------------------")
     new_element = [directionString, angle100, -1, directionString, angle100]
     if last_element is None:
         new_element[CONST_INC] = 1
@@ -405,7 +414,7 @@ def smooth_directionX(directionString, angle100):
         if last_element[CONST_DIR] == directionString:
             new_element[CONST_INC] = last_element[CONST_INC] + 1
             #printD("SAME as before", new_element[CONST_INC])
-            if last_element[CONST_INC] < 6:
+            if last_element[CONST_INC] < 4:
                 #printD("KEEP SMOOTH direction", last_element[CONST_INC])
                 new_element[CONST_SMOOTH_DIR] = last_element[CONST_SMOOTH_DIR]
                 new_element[CONST_SMOOTH_ANGLE] = last_element[CONST_SMOOTH_ANGLE]
@@ -470,9 +479,9 @@ def sendIncrementToMotor(directionX, angle100, driver = None):
                 driver.setAngle(angle100)
 
 
-def detect_lane(image, debugFlag = False, driver = None):
+def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     global inc 
-    setDebug(debugFlag)
+    setDebug(debugFlag, xdebugFlag)
     #printD("------------")
     crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
     (h, w) = crop_img.shape[:2]
