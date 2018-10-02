@@ -98,7 +98,7 @@ class StreamReader:
             self.recordImage(img)
             if self.isDebug():
                 # show the frame
-                cv2.imshow("Frame", img)
+                # cv2.imshow("Frame", img)
 
             self.rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
