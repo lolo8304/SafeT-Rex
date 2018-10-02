@@ -151,10 +151,10 @@ class CarStateMachine():
         self.setRUN(self.getSpeed() + adaptSpeed)
 
     def left(self):
-        self.setAngle(self.getAngle()+3)
+        self.setAngle(self.getAngle()+10)
 
     def right(self):
-        self.setAngle(self.getAngle()-3)
+        self.setAngle(self.getAngle()-10)
 
     def setREDLIGHT(self):
         print("Red Light")
