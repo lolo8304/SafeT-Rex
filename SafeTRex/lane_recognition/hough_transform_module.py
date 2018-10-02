@@ -186,7 +186,7 @@ def get_lane_lines(color_image):
     crop_img = None
     blurred = None
     gray = None
-    if True or isRaspi:
+    if isRaspi:
         crop_img = cv2.flip(color_image, flipCode=1)[0: h - h3, 0:w]
         gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
