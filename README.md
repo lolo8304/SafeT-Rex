@@ -19,12 +19,12 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 - 3D-print own funny signs to control the cars speed
 - build our own mobile track to train the car and to demo it at the fair / ZERO Gravity
 
-![what we build](/what-we-build.jpg)
+![what we build](/what-we-build.png)
 
 # Demo
 - show a live demo in 1st person view on the cinema stage :-) No slides.
 - some other things .... pssst. surprise
-![Demo procedures](/demo-script.jpg)
+![Demo procedures](/demo-script.png)
 
 
 # Links to technologies to be used / shared
@@ -72,7 +72,7 @@ Open CV
 - Flipchart: AXA
 - AppleTV: Lolo
 
-![preparations](/hardware-car.jpg)
+![preparations](/hardware-car.png)
 
 
 
