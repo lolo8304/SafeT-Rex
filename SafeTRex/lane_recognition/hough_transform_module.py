@@ -552,7 +552,7 @@ def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
         #printD("no crossed lines")
         return
 
-    #show_steering_angle(point, directionString, angle100, crop_img, 50)
+    show_steering_angle(point, directionString, angle100, crop_img, 50)
 
     new_element = smooth_directionX(directionString, angle100)
     show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
