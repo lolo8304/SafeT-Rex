@@ -367,13 +367,13 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
         lastRightLine = right
         #no line visible on left side, seems to be too far right -> go left
         drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
-        return "left-inc", inc
+        return "straigh", 0
     elif right_degree == 0:
         lastLeftLine = left
         #no line visible on right side, seems to be too far right -> go right
         p1 = ( right.fx(0), 0)
         drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
-        return "right-inc", inc
+        return "straigh", 0
     elif (15 < right_degree - left_degree):
         lastLeftLine = left
         lastRightLine = right
