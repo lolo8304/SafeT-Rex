@@ -266,6 +266,14 @@ def drawLine(crop_img, line, color=(0,255,0), text=""):
         if isDebug():
             cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,10)
 
+
+inc = 0
+lastMotorAngle = -142
+lastMotorTime = -42.0
+lastLeftLine = None
+lastRightLine = None
+
+
 # from -1.0 via 0 to 1.0 (left to right)
 def steering_directionX(intersection_point, left, right, image, defaultW = 0):
     x = intersection_point[0]
@@ -343,6 +351,8 @@ def drawArray(crop_img, point, directionX, color):
 
 ## https://steemit.com/mathematics/@mes/video-notes-angle-between-two-lines-formula-in-terms-of-slopes
 def calculate_steering_angle_from_single_line(point, left, right, crop_img):
+    global lastLeftLine
+    global lastRightLine
     directionX = steering_directionX( point, left, right, crop_img)
     directionString, angle100 = steering_angle(directionX, crop_img)
     (h, w) = crop_img.shape[:2]
@@ -354,22 +364,30 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     printXD("degree =", str(deg), " left=", left_degree, " right=", right_degree)
     inc = 3
     if left_degree == 0:
+        lastRightLine = right
         #no line visible on left side, seems to be too far right -> go left
         drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
         return "left-inc", inc
     elif right_degree == 0:
+        lastLeftLine = left
         #no line visible on right side, seems to be too far right -> go right
         p1 = ( right.fx(0), 0)
         drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
         return "right-inc", inc
-    elif (left_degree < right_degree + 10):
+    elif (left_degree + 10 < right_degree):
+        lastLeftLine = left
+        lastRightLine = right
         drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
         return "left-inc", inc
-    elif (right_degree < left_degree + 10):
+    elif (right_degree + 10 < left_degree):
+        lastLeftLine = left
+        lastRightLine = right
         p1 = ( right.fx(0), 0)
         drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
         return "right-inc", inc
     else:
+        lastLeftLine = left
+        lastRightLine = right
         cv2.circle(crop_img, point, 20, (0,0,255), -1)
         return "straight", 0
 
@@ -433,9 +451,6 @@ def smooth_directionX(directionString, angle100):
     last_element = new_element
     return new_element
 
-inc = 0
-lastMotorAngle = -142
-lastMotorTime = -42.0
 
 def allowedToSendToMotor(angle100):
     global lastMotorAngle
@@ -481,6 +496,18 @@ def sendIncrementToMotor(directionX, angle100, driver = None):
             if driver is not None:
                 driver.setAngle(angle100)
 
+def calculate_steering_angle_from_double_line(crop_img, left, right):
+    global lastLeftLine
+    global lastRightLine
+    crossed, point = line_intersection2(left, right)
+    lastLeftLine = left
+    lastRightLine = right
+    if (crossed):
+        drawLine(crop_img, left, (0,0,255), "left")
+        drawLine(crop_img, right, (0,255,0), "right")
+        directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
+        return crossed, directionString, angle100
+    return crossed, None, None
 
 def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     global inc 
@@ -494,29 +521,32 @@ def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     point = (0, 0)
     crossed = False
     if (isRationalLine(left) and isRationalLine(right)):
-        crossed, point = line_intersection2(left, right)
-        if (crossed):
-            drawLine(crop_img, left, (0,0,255), "left")
-            drawLine(crop_img, right, (0,255,0), "right")
-            directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
+        crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, right)
     elif isRationalLine(left):
-        #virtual_horizon = Line(w, 0, w, h)
-        virtual_horizon = Line(0, 0, w, 0)
-        crossed, point = line_intersection2(left, virtual_horizon)
-        if crossed:
-            drawLine(crop_img, left, (0,0,255), "left")
-            virtual_horizon = Line(point[0], 0, point[0], h)
-            drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
-            directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
+        if lastRightLine is None:
+            #virtual_horizon = Line(w, 0, w, h)
+            virtual_horizon = Line(0, 0, w, 0)
+            crossed, point = line_intersection2(left, virtual_horizon)
+            if crossed:
+                drawLine(crop_img, left, (0,0,255), "left")
+                virtual_horizon = Line(point[0], 0, point[0], h)
+                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
+        else:
+            crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, lastRightLine)
+
     elif isRationalLine(right):
-        #virtual_horizon = Line(0, 0, 0, h)
-        virtual_horizon = Line(0, 0, w, 0)
-        crossed, point = line_intersection2(virtual_horizon, right)
-        if crossed:
-            virtual_horizon = Line(point[0], h, point[0], 0)
-            drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
-            drawLine(crop_img, right, (0,255,0), "right")
-            directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
+        if lastLeftLine is None:
+            #virtual_horizon = Line(0, 0, 0, h)
+            virtual_horizon = Line(0, 0, w, 0)
+            crossed, point = line_intersection2(virtual_horizon, right)
+            if crossed:
+                virtual_horizon = Line(point[0], h, point[0], 0)
+                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                drawLine(crop_img, right, (0,255,0), "right")
+                directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
+        else:
+            crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, lastLeftLine, right)
 
     if not crossed:
         #printD("no crossed lines")
