@@ -183,13 +183,14 @@ def get_lane_lines(color_image):
     #h = int(h / 2)
     h3 = int(h / 3)
     #h3 = 0
-    crop_img = color_image[0: h - h3, 0:w]
-    gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
-    blurred = None
+    crop_img = None, blurred = None, gray = None
     if isRaspi:
-        gray_flip = cv2.flip(gray[0: h - h3, 0:w], flipCode=1)
-        blurred = cv2.GaussianBlur(gray_flip[0: h - h3, 0:w], (17, 17), 0)
+        crop_img = cv2.flip(color_image[0: h - h3, 0:w], flipCode=1)
+        gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
     else:
+        crop_img = color_image[0: h - h3, 0:w]
+        gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (11, 11), 0)
     edged = cv2.Canny(blurred[0: h - h3, 0:w], 65, 65)
 
