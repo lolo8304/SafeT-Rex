@@ -61,7 +61,7 @@ while(True):
 
         detect_lane(image, args["debug"], args["xdebug"], driver)
 
-    key = cv2.waitKey(1) & 0xFF
+    key = cv2.waitKey(0) & 0xFF
     if (key != 255):
         pass
         #print("key=",key)

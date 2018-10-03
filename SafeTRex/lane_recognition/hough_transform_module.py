@@ -75,6 +75,9 @@ class Line:
     def degree_between(self, line): 
         return self.degree() + line.degree()
 
+    def printXD(self, text):
+        printXD(text," (x,y)=", self.x1, self.y1, " (x,y)=", self.x2, self.y2)
+
         
 
 time.sleep(0.1)
@@ -138,7 +141,53 @@ def hough_lines_detection(img, rho, theta, threshold, min_line_len, max_line_gap
                             maxLineGap=max_line_gap)
     return lines
 
-def compute_lane_from_candidates(line_candidates, img_shape):
+### start closest lines
+
+
+def find_longest_none_zero(array, size):
+    # example [0 [obj] 0 0 0 0 0 0 [obj] [obj] [obj,obj] [obj,obj,obj] 0 [obj] [obj,obj] ]
+    cc = np.zeros([size], int)
+    i = 0
+    maxC = 0
+    maxI = -1
+    minI = 0
+    minMaxI = 0
+    for a in array:
+      if i > 0 and len(a) > 0:
+          if cc[i-1] == 0:
+            minI = i
+          cc[i] = cc[i-1] + len(a)
+      else:
+          cc[i] = len(a)
+      if cc[i] > maxC:
+        maxC = cc[i]
+        maxI = i
+        minMaxI = minI
+      i = i+1
+    return minMaxI, maxI, maxC
+
+def keep_longest_non_zero(array, size):
+  minIndex, maxIndex, max = find_longest_none_zero(array, size)
+  cc = []
+  for i in range(minIndex, maxIndex+1):
+    cc.extend(array[i])
+  return cc
+
+def count_distance(array, f, max, distance):
+    max_index = max // distance + 1
+    count = [[] for _ in range(max_index)]
+    for a in array:
+        i = int( f(a) // distance)
+        count[i].append(a)
+    return count
+
+def keep_closests(array, f, max, distance):
+    cc = count_distance(array, f, max, distance)
+    return keep_longest_non_zero(cc, len(cc))
+
+### end closest lines
+
+def compute_lane_from_candidates(line_candidates, crop_img, img_shape):
     """
     Compute lines that approximate the position of both road lanes.
 
@@ -149,12 +198,17 @@ def compute_lane_from_candidates(line_candidates, img_shape):
 
     # separate candidate lines according to their slope
     pos_lines = [l for l in line_candidates if l.slope > 0]
+    pos_lines_closests = keep_closests(pos_lines, lambda line: line.x1, img_shape[1], 30 )
+    pos_lines = pos_lines_closests
+
     neg_lines = [l for l in line_candidates if l.slope < 0]
+    neg_lines_closests = keep_closests(neg_lines, lambda line: line.x1, img_shape[1], 30 )
+    neg_lines = neg_lines_closests
 
     # interpolate biases and slopes to compute equation of line that approximates left lane
     # median is employed to filter outliers
-    neg_bias = np.median([l.bias for l in neg_lines]).astype(int)
-    neg_slope = np.median([l.slope for l in neg_lines])
+    neg_bias = np.average([l.bias for l in neg_lines]).astype(int)
+    neg_slope = np.average([l.slope for l in neg_lines])
     x1, y1 = 0, neg_bias
     x2, y2 = -np.int32(np.round(neg_bias / neg_slope)), 0
     left_lane = Line(x1, y1, x2, y2)
@@ -191,7 +245,8 @@ def get_lane_lines(color_image):
         gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
     else:
-        crop_img = color_image[0: h - h3, 0:w]
+        #crop_img = color_image[0: h - h3, 0:w]
+        crop_img = color_image
         gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (11, 11), 0)
     edged = cv2.Canny(blurred[0: h - h3, 0:w], 65, 65)
@@ -209,7 +264,7 @@ def get_lane_lines(color_image):
                                 rho=1,
                                 theta=np.pi / 180,
                                 threshold=1,
-                                min_line_len=25,
+                                min_line_len=20,
                                 max_line_gap=5)
     #printD(lines)
 
@@ -222,12 +277,12 @@ def get_lane_lines(color_image):
         for line in detected_lines:
             # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
             # consider only lines with slope between 18 and 60 degrees
-            if 0.5 <= np.abs(line.slope) <= 4:
+            if 0.5 <= np.abs(line.slope) <= 3:
                 #printD("line candidate slope=", line.slope, " degree=", line.degree())
-                line.draw(crop_img)
+                line.draw(crop_img, thickness=2)
                 candidate_lines.append(line)
         # interpolate lines candidates to find both lanes
-        left, right = compute_lane_from_candidates(candidate_lines, gray.shape)
+        left, right = compute_lane_from_candidates(candidate_lines, crop_img, gray.shape)
         return crop_img, gray, blurred, edged, left, right
     else:
         return crop_img, gray, blurred, edged, None, None
@@ -260,11 +315,11 @@ def line_intersection(line1, line2):
     y = det(d, ydiff) / div
     return True, (x, y)
 
-def drawLine(crop_img, line, color=(0,255,0), text=""):
-    printXD(text," (x,y)=", line.x1, line.y1, " (x,y)=", line.x2, line.y2)
+def drawLine(crop_img, line, color=(0,255,0), text="", tickness=4):
+    line.printXD(text)
     if isRationalLine(line):
         if isDebug():
-            cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,10)
+            cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,tickness)
 
 
 inc = 0
@@ -367,24 +422,24 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
         lastRightLine = right
         #no line visible on left side, seems to be too far right -> go left
         drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
-        return "straigh", 0
+        return "straight", 0
     elif right_degree == 0:
         lastLeftLine = left
         #no line visible on right side, seems to be too far right -> go right
         p1 = ( right.fx(0), 0)
-        drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
-        return "straigh", 0
+        #drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
+        return "straight", 0
     elif (15 < right_degree - left_degree):
         lastLeftLine = left
         lastRightLine = right
-        drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
-        return "left-inc", inc
+        #drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
+        return "right-inc", inc
     elif (15 < left_degree - right_degree):
         lastLeftLine = left
         lastRightLine = right
         p1 = ( right.fx(0), 0)
-        drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
-        return "right-inc", inc
+        #drawArray(crop_img, ( int((right.x2 + p1[0])// 2), int((right.y2 - p1[1]) // 2) ), 1, (0,255,0))
+        return "left-inc", inc
     else:
         lastLeftLine = left
         lastRightLine = right
@@ -503,8 +558,8 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
     lastLeftLine = left
     lastRightLine = right
     if (crossed):
-        drawLine(crop_img, left, (0,0,255), "left")
-        drawLine(crop_img, right, (0,255,0), "right")
+        drawLine(crop_img, left, (0,0,255), "left", 2)
+        drawLine(crop_img, right, (0,255,0), "right", 2)
         directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
         return crossed, directionString, angle100
     return crossed, None, None
@@ -523,27 +578,29 @@ def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     if (isRationalLine(left) and isRationalLine(right)):
         crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, right)
     elif isRationalLine(left):
+        print("only left")
         if lastRightLine is None:
             #virtual_horizon = Line(w, 0, w, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(left, virtual_horizon)
             if crossed:
-                drawLine(crop_img, left, (0,0,255), "left")
                 virtual_horizon = Line(point[0], 0, point[0], h)
-                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                #drawLine(crop_img, left, (0,0,255), "left")
+                #drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
                 directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
         else:
             crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, lastRightLine)
 
     elif isRationalLine(right):
+        print("only right")
         if lastLeftLine is None:
             #virtual_horizon = Line(0, 0, 0, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(virtual_horizon, right)
             if crossed:
                 virtual_horizon = Line(point[0], h, point[0], 0)
-                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
-                drawLine(crop_img, right, (0,255,0), "right")
+                #drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                #drawLine(crop_img, right, (0,255,0), "right")
                 directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
         else:
             crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, lastLeftLine, right)
