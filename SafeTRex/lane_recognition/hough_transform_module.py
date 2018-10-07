@@ -10,7 +10,6 @@ from math import degrees
 from collections import deque
 import os
 
-
 class Line:
     """
     A Line is defined from two points (x1, y1) and (x2, y2) as follows:
@@ -50,7 +49,7 @@ class Line:
     def fx(self, y):
         return (y - self.bias) / self.slope
 
-    def draw(self, img, color=[0, 255, 255], thickness=5):
+    def draw(self, img, color=(0, 255, 255), thickness=3):
 
         # xx1 = max(0, self.x1)
         # yy1 = max(0, self.y1)
@@ -95,7 +94,7 @@ def printD(*objects):
     global startTime
     t = time.time() - startTime
     print(format(t, '.2f'), ": ", end="")
-    print(objects)
+    print(objects, flush=True)
 
 def printXD(*objects):
     if (isXDebug()):
@@ -131,6 +130,149 @@ def show_thumb(name, image, x_index, y_index):
     cv2.moveWindow("Card Detector-"+name, x_index * (dim[0] + 20), y_index * (dim[1] + 20));
 
 
+#### ------------------------------------------
+# pipelines START
+#### ------------------------------------------
+
+
+## crop image
+##         "algorithm" : "bottom", "top"
+##         "factor" : 0.33333333
+def pipeline_Crop(image, parameters):
+    alg = parameters["algorithm"]
+    factor = parameters["factor"]
+    (h, w) = image.shape[:2]
+    image = image.copy()
+    if alg == "bottom":
+        image = image[0:h - int(h * factor), 0:w]
+    elif alg == "top":
+        image = image[int(h * factor):h, 0:w]
+    return image
+
+# no parameters
+def pipeline_Grey(image, parameters):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+#          "size" : 17,
+#          "sigma" : 0
+def pipeline_GaussianBlur(image, parameters):
+    size = parameters["size"]
+    sigma = parameters["sigma"]
+    return cv2.GaussianBlur(image, (size, size), sigma)
+
+#          "size" : 17
+def pipeline_medianBlur(image, parameters):
+    size = parameters["size"]
+    return cv2.medianBlur(image, size)
+
+#          "kernel" : 3
+def pipeline_SelectiveGaussianBlur(image, parameters):
+    kernel = parameters["kernel"]
+    return cv2.bilateralFilter(image, kernel, kernel * 2, kernel / 2)
+
+
+#          "max" : 3
+#          "method" : 0 oder 1
+#          "size" : 5
+def pipeline_AdaptiveThreshold(image, parameters):
+    max = parameters["max"]
+    method = parameters["method"]
+    size = parameters["size"]
+    image = image.copy()
+    cv2.adaptiveThreshold(image, max, method, cv2.THRESH_BINARY, size, 0.0)
+    return image
+
+
+#          "threshold" : 3
+#          "max" : 0 oder 1
+#          "type" : 0
+def pipeline_Threshold(image, parameters):
+    threshold = parameters["threshold"]
+    max = parameters["max"]
+    type = parameters["type"]
+    image = image.copy()
+    cv2.threshold(image, threshold, max, type)
+    return image
+
+
+#          "threshold1" : 65.0,
+#          "threshold2" : 65.0,
+#          "apertureSize" : 3,
+#          "L2gradient" : False
+def pipeline_Canny(image, parameters):
+    threshold1 = parameters["threshold1"]
+    threshold2 = parameters["threshold2"]
+    apertureSize = parameters["apertureSize"]
+    L2gradient = parameters["L2gradient"]
+    return cv2.Canny(image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=L2gradient )
+
+
+def pipeline_process(image, image_config):
+    #printD("pipeline configuration:",image_config["title"])
+    configs = image_config["pipeline"]
+
+    pipeline_results = []
+    pipeline_result = {
+        "title" : image_config["title"],
+        "image" : image,
+        "images" : pipeline_results
+    }
+    pipeline_results.append( {
+        "type" : "origin",
+        "title" : "origin",
+        "parameters" : [],
+        "image" : image
+    })
+
+    draw = False
+    if configs and isinstance(configs, list):
+        idx = 0
+        for config in configs:
+            type = config["type"]
+            params = config["parameters"]
+            off = "off" in config and config["off"]
+            if not off:
+                #printD("pipeline: ",type, " params: ", params)
+                image = globals()['pipeline_'+type](image, params)
+                if "draw" in config and config["draw"]:
+                    draw = True
+                    pipeline_result["draw_image"] = image
+                pipeline_results.append( {
+                    "type" : type,
+                    "title" : type + "-"+str(idx),
+                    "parameters" : params,
+                    "image" : image
+                })
+                idx = idx + 1
+    if not draw:
+        pipeline_result["draw"] = pipeline_result["image"]
+    pipeline_result["result_image"] = image
+    return pipeline_result
+
+def pipeline_show_thumb(pipeline_result):
+    images = pipeline_result["images"]
+    idx = 0
+    for image in images:
+        show_thumb(image["title"],image["image"], idx % 2, idx // 2)
+        idx = idx + 1
+
+
+def execute_pipeline_key(key_in, image_config):
+    configs = image_config["pipeline"]
+    if configs and isinstance(configs, list):
+        for config in configs:
+            off = "off" in config and config["off"]
+            if not off and "keys" in config:
+                for key, object in config["keys"].items():
+                    if ord(key) == key_in:
+                        config["parameters"][object["name"]] = object["f"](config["parameters"])
+                        printD("execute ",config["type"]," key=", key, " new ",object["name"],"=", config["parameters"][object["name"]])
+                        return True, image_config
+    return False, image_config
+
+#### ------------------------------------------
+# pipelines END
+#### ------------------------------------------
 
 
 def hough_lines_detection(img, rho, theta, threshold, min_line_len, max_line_gap):
@@ -200,10 +342,16 @@ def compute_lane_from_candidates(line_candidates, crop_img, img_shape):
     pos_lines = [l for l in line_candidates if l.slope > 0]
     pos_lines_closests = keep_closests(pos_lines, lambda line: line.x1, img_shape[1], 30 )
     pos_lines = pos_lines_closests
+    for pos in pos_lines_closests:
+        pass
+        #pos.draw(crop_img, thickness=5)
 
     neg_lines = [l for l in line_candidates if l.slope < 0]
     neg_lines_closests = keep_closests(neg_lines, lambda line: line.x1, img_shape[1], 30 )
     neg_lines = neg_lines_closests
+    for neg in neg_lines_closests:
+        pass
+        #neg.draw(crop_img, thickness=5)
 
     # interpolate biases and slopes to compute equation of line that approximates left lane
     # median is employed to filter outliers
@@ -229,27 +377,11 @@ def isRationalNumber(f):
 def isRationalLine(line):
     return line and isRationalNumber(line.x1) and isRationalNumber(line.y1) and isRationalNumber(line.x2) and isRationalNumber(line.y2)
 
-def get_lane_lines(color_image):
+def get_lane_lines(color_image, image_config):
     global isRaspi
-    # grab the dimensions of the image and calculate the center
-    # of the image
-    (h, w) = color_image.shape[:2]
-    #h = int(h / 2)
-    h3 = int(h / 3)
-    #h3 = 0
-    crop_img = None
-    blurred = None
-    gray = None
-    if isRaspi:
-        crop_img = color_image[0: h - h3, 0:w]
-        gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (17, 17), 0)
-    else:
-        #crop_img = color_image[0: h - h3, 0:w]
-        crop_img = color_image
-        gray = cv2.cvtColor(crop_img[0: h - h3, 0:w], cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray[0: h - h3, 0:w], (11, 11), 0)
-    edged = cv2.Canny(blurred[0: h - h3, 0:w], 65, 65)
+    pipeline_result = pipeline_process(color_image, image_config)
+    crop_img = pipeline_result["draw_image"]
+    result_image = pipeline_result["result_image"]
 
 # with the arguments:
 # dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
@@ -260,13 +392,12 @@ def get_lane_lines(color_image):
 # minLinLength: The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
 # maxLineGap: The maximum gap between two points to be considered in the same line.
     lines = []
-    lines = hough_lines_detection(img=edged,
+    lines = hough_lines_detection(img=result_image,
                                 rho=1,
                                 theta=np.pi / 180,
                                 threshold=1,
                                 min_line_len=20,
-                                max_line_gap=5)
-    #printD(lines)
+                                max_line_gap=10)
 
     if(lines is not None and lines.any() != None):
         # convert (x1, y1, x2, y2) tuples into Lines
@@ -277,15 +408,17 @@ def get_lane_lines(color_image):
         for line in detected_lines:
             # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
             # consider only lines with slope between 18 and 60 degrees
-            if 0.5 <= np.abs(line.slope) <= 3:
+            if 0.4 <= np.abs(line.slope) <= 4:
                 #printD("line candidate slope=", line.slope, " degree=", line.degree())
-                line.draw(crop_img, thickness=2)
+                line.draw(crop_img, color=(0, 255, 0), thickness=1)
                 candidate_lines.append(line)
+            else:
+                line.draw(crop_img, color=(0, 0, 255), thickness=1)
         # interpolate lines candidates to find both lanes
-        left, right = compute_lane_from_candidates(candidate_lines, crop_img, gray.shape)
-        return crop_img, gray, blurred, edged, left, right
+        left, right = compute_lane_from_candidates(candidate_lines, crop_img, crop_img.shape)
+        return pipeline_result, left, right
     else:
-        return crop_img, gray, blurred, edged, None, None
+        return pipeline_result, None, None
 
 
 def line_intersection2(line1, line2):
@@ -416,7 +549,7 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     right_degree = right.degree()
     deg = left.degree_between(right)
 
-    printXD("degree =", str(deg), " diff=", (abs(left_degree - right_degree))," left=", left_degree, " right=", right_degree)
+    #printXD("degree =", str(deg), " diff=", (abs(left_degree - right_degree))," left=", left_degree, " right=", right_degree)
     inc = 3
     if left_degree == 0:
         lastRightLine = right
@@ -564,11 +697,13 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
         return crossed, directionString, angle100
     return crossed, None, None
 
-def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
+def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driver = None):
     global inc 
+    
     setDebug(debugFlag, xdebugFlag)
     #printD("------------")
-    crop_img, gray, blurred, edged, left, right = get_lane_lines(image)
+    pipeline_result, left, right = get_lane_lines(image, image_config)
+    crop_img = pipeline_result["draw_image"]
     (h, w) = crop_img.shape[:2]
 
     directionString = None
@@ -578,48 +713,45 @@ def detect_lane(image, debugFlag = False, xdebugFlag = False, driver = None):
     if (isRationalLine(left) and isRationalLine(right)):
         crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, right)
     elif isRationalLine(left):
-        print("only left")
+        #printXD("only left")
         if lastRightLine is None:
             #virtual_horizon = Line(w, 0, w, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(left, virtual_horizon)
             if crossed:
                 virtual_horizon = Line(point[0], 0, point[0], h)
-                #drawLine(crop_img, left, (0,0,255), "left")
-                #drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                drawLine(crop_img, left, (0,0,255), "left")
+                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
                 directionString, angle100 = calculate_steering_angle_from_single_line(point, left, virtual_horizon, crop_img)
         else:
             crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, lastRightLine)
 
     elif isRationalLine(right):
-        print("only right")
+        #printXD("only right")
         if lastLeftLine is None:
             #virtual_horizon = Line(0, 0, 0, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(virtual_horizon, right)
             if crossed:
                 virtual_horizon = Line(point[0], h, point[0], 0)
-                #drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
-                #drawLine(crop_img, right, (0,255,0), "right")
+                drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")
+                drawLine(crop_img, right, (0,255,0), "right")
                 directionString, angle100 = calculate_steering_angle_from_single_line(point, virtual_horizon, right, crop_img)
         else:
             crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, lastLeftLine, right)
+
 
     if not crossed:
         #printD("no crossed lines")
         return
 
-    show_steering_angle(point, directionString, angle100, crop_img, 50)
+    #show_steering_angle(point, directionString, angle100, crop_img, 50)
 
     new_element = smooth_directionX(directionString, angle100)
-    show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
+    #show_steering_angle(point, new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], crop_img)
     sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
     time.sleep(0.02)
     if isDebug():
-        show_thumb("crop",crop_img, 0, 0)
-    #show_thumb("edge",edged, 1, 0)
-    #show_thumb("gray",gray, 0, 1)
-    #show_thumb("gray",gray, 0, 1)
-    #show_thumb("blurred",blurred, 1, 1)
+        pipeline_show_thumb(pipeline_result)
 
