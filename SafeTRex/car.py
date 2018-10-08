@@ -144,7 +144,7 @@ class CarStateMachine():
         print("Last Stop to recent!")
 
     def setAngle(self, angle):
-        angle = max(-45, min(angle, 45))
+        angle = max(-30, min(angle, 30))
         adaptSpeed = self.speedAdaption(angle)
         self.__stateAngle = ("ANGLE", angle)
         self._car.steer(angle)
