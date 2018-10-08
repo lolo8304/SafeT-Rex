@@ -10,30 +10,75 @@ def axa_hackathon_lane():
     "pipeline" : [
       {
         "type" : "Crop",
+        "draw" : True,
         "parameters" : {
           "algorithm" : "bottom",
-          "factor" : 0.33333333
-        },
+          "factor" : 0.43333333
+        }
       },
       {
         "type" : "Grey",
         "parameters" : {
-        },
+        }
       },
       {
         "type" : "GaussianBlur",
         "parameters": {
-          "size" : 17,
-          "sigma" : 0
+          "size" : 15,
+          "sigma" : -0.1
+        },
+        "keys" : {
+          "a" : {
+            "name" : "size",
+            "f": (lambda params: params["size"] - 2)
+          },
+          "s" : {
+            "name" : "size",
+            "f" : (lambda params: params["size"] + 2)
+          },
+          "d" : {
+            "name" : "sigma",
+            "f": (lambda params: params["sigma"] - 0.1)
+          },
+          "f" : {
+            "name" : "sigma",
+            "f" : (lambda params: params["sigma"] + 0.1)
+          }
         }
       },
       {
         "type" : "Canny",
         "parameters": {
-          "threshold1" : 65.0,
-          "threshold2" : 65.0,
+          "threshold1" : 101.0,
+          "threshold2" : 101.0,
           "apertureSize" : 3,
           "L2gradient" : False
+        },
+        "keys" : {
+          "y" : {
+            "name" : "threshold1",
+            "f": (lambda params: params["threshold1"] - 2.0)
+          },
+          "x" : {
+            "name" : "threshold1",
+            "f" : (lambda params: params["threshold1"] + 2.0)
+          },
+          "c" : {
+            "name" : "threshold2",
+            "f": (lambda params: params["threshold2"] - 2.0)
+          },
+          "v" : {
+            "name" : "threshold2",
+            "f" : (lambda params: params["threshold2"] + 2.0)
+          },
+          "b" : {
+            "name" : "apertureSize",
+            "f": (lambda params: params["apertureSize"] - 2)
+          },
+          "n" : {
+            "name" : "apertureSize",
+            "f" : (lambda params: params["apertureSize"] + 2)
+          }
         }
       }
     ],
