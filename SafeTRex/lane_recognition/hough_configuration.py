@@ -24,7 +24,7 @@ def axa_hackathon_lane():
       {
         "type" : "GaussianBlur",
         "parameters": {
-          "size" : 15,
+          "size" : 23,
           "sigma" : -0.1
         },
         "keys" : {
