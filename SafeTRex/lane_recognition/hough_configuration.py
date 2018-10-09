@@ -10,21 +10,33 @@ def axa_hackathon_lane():
     "pipeline" : [
       {
         "type" : "Crop",
-        "draw" : True,
+        "draw" : False,
         "parameters" : {
           "algorithm" : "bottom",
-          "factor" : 0.43333333
+          "factor" : 0.5
         }
       },
       {
-        "type" : "Grey",
+        "type" : "Crop",
+        "draw" : True,
         "parameters" : {
+          "algorithm" : "top",
+          "factor" : 0.2
+        }
+      },
+      
+      {
+        "type" : "HLS_LUV_LAB",
+        "parameters": {
+          "channel1" : 1,
+          "channel2" : 0,
+          "channel3" : 1
         }
       },
       {
         "type" : "GaussianBlur",
         "parameters": {
-          "size" : 23,
+          "size" : 9,
           "sigma" : -0.1
         },
         "keys" : {
@@ -47,12 +59,71 @@ def axa_hackathon_lane():
         }
       },
       {
+        "type" : "Grey",
+        "off" : False,
+        "parameters" : {
+        },
+      },
+      {
+        "type" : "Threshold",
+        "off" : True,
+        "parameters": {
+          "threshold" : 128,
+          "max" : 255,
+          "type" : 0
+        },
+        "keys" : {
+          "5" : {
+            "name" : "threshold",
+            "f": (lambda params: params["threshold"] - 2)
+          },
+          "6" : {
+            "name" : "threshold",
+            "f" : (lambda params: params["threshold"] + 2)
+          },
+          "7" : {
+            "name" : "max",
+            "f": (lambda params: params["max"] - 2)
+          },
+          "8" : {
+            "name" : "max",
+            "f" : (lambda params: params["max"] + 2)
+          }
+        }
+      },
+      {
+        "type" : "Warp",
+        "off" : True,
+        "parameters": {
+          "warp_left" : 195,
+          "warp_right" : 395,
+        },
+        "keys" : {
+          "1" : {
+            "name" : "warp_left",
+            "f": (lambda params: params["warp_left"] - 2)
+          },
+          "2" : {
+            "name" : "warp_left",
+            "f" : (lambda params: params["warp_left"] + 2)
+          },
+          "3" : {
+            "name" : "warp_right",
+            "f": (lambda params: params["warp_right"] - 2)
+          },
+          "4" : {
+            "name" : "warp_right",
+            "f" : (lambda params: params["warp_right"] + 2)
+          }
+        }
+      },
+      {
         "type" : "Canny",
         "parameters": {
-          "threshold1" : 101.0,
-          "threshold2" : 101.0,
+          "threshold1" : 43.0,
+          "threshold2" : 121.0,
           "apertureSize" : 3,
-          "L2gradient" : False
+          "L2gradient" : True
         },
         "keys" : {
           "y" : {

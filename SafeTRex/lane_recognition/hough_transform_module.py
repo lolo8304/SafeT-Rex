@@ -7,6 +7,7 @@ import numpy as np
 from math import atan2
 from math import atan
 from math import degrees
+from math import sqrt
 from collections import deque
 import os
 
@@ -25,9 +26,13 @@ class Line:
 
         self.slope = self.compute_slope()
         self.bias = self.compute_bias()
+        self.length = self.compute_length()
 
     def compute_slope(self):
         return (self.y2 - self.y1) / (self.x2 - self.x1 + np.finfo(float).eps)
+
+    def compute_length(self):
+        return sqrt((self.y2 - self.y1) ** 2 + (self.x2 - self.x1) ** 2)
 
     def compute_bias(self):
         return self.y1 - self.slope * self.x1
@@ -153,6 +158,47 @@ def pipeline_Crop(image, parameters):
 def pipeline_Grey(image, parameters):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+# no parameters
+##         "channel" : 0 = H, 1 = L, 2 = S
+def pipeline_HLS(image, parameters):
+    channel = parameters["channel"]
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    channels = cv2.split(channels_image)
+    return channels[channel]
+
+# no parameters
+##         "channel" : 0 = L, 1 = U, 2 = V
+def pipeline_LUV(image, parameters):
+    channel = parameters["channel"]
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LUV)
+    channels = cv2.split(channels_image)
+    return channels[channel]
+
+# no parameters
+##         "channel" : 0 = L, 1 = A, 2 = B
+def pipeline_LAB(image, parameters):
+    channel = parameters["channel"]
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    L,A,B = cv2.split(channels_image)
+    return L
+
+
+# based on https://www.linkedin.com/pulse/advanced-lane-finding-pipeline-tiba-razmi/
+def pipeline_HLS_LUV_LAB(image, parameters):
+    channel1 = parameters["channel1"]
+    channel2 = parameters["channel2"]
+    channel3 = parameters["channel3"]
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    HLS_channels = cv2.split(channels_image)
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LUV)
+    LUV_channels = cv2.split(channels_image)
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    LAB_channels = cv2.split(channels_image)
+    result_image = cv2.merge((HLS_channels[channel1], LUV_channels[channel2], LAB_channels[channel3]))
+    return result_image
+
+
+
 #          "size" : 17,
 #          "sigma" : 0
 def pipeline_GaussianBlur(image, parameters):
@@ -191,8 +237,8 @@ def pipeline_Threshold(image, parameters):
     max = parameters["max"]
     type = parameters["type"]
     image = image.copy()
-    cv2.threshold(image, threshold, max, type)
-    return image
+    ret, image2 = cv2.threshold(image, threshold, max, type)
+    return image2
 
 
 #          "threshold1" : 65.0,
@@ -204,7 +250,33 @@ def pipeline_Canny(image, parameters):
     threshold2 = parameters["threshold2"]
     apertureSize = parameters["apertureSize"]
     L2gradient = parameters["L2gradient"]
-    return cv2.Canny(image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=L2gradient )
+    canny = cv2.Canny(image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=L2gradient )
+    #cv2.imshow("canny_121",canny)
+    return canny
+
+
+# warp_left: int
+# warp_right: int
+def pipeline_Warp(image, parameters):
+    (IMAGE_H, IMAGE_W) = image.shape[:2]
+
+    #IMAGE_H = 192
+    #IMAGE_W = 640
+
+    #IMAGE_WARP_LEFT = 207
+    #IMAGE_WARP_RIGHT = 405
+
+    IMAGE_WARP_LEFT = parameters["warp_left"]
+    IMAGE_WARP_RIGHT = parameters["warp_right"]
+
+    src = np.float32([[0, IMAGE_H], [IMAGE_W, IMAGE_H], [0, 0], [IMAGE_W, 0]])
+    dst = np.float32([[IMAGE_WARP_LEFT, IMAGE_H], [IMAGE_WARP_RIGHT, IMAGE_H], [0, 0], [IMAGE_W, 0]])
+    M = cv2.getPerspectiveTransform(src, dst) # The transformation matrix
+    Minv = cv2.getPerspectiveTransform(dst, src) # Inverse transformation
+
+    #img = img[450:(450+IMAGE_H), 0:IMAGE_W] # Apply np slicing for ROI crop
+    warped_img = cv2.warpPerspective(image, M, (IMAGE_W, IMAGE_H)) # Image warping    
+    return warped_img
 
 
 def pipeline_process(image, image_config):
@@ -382,6 +454,7 @@ def get_lane_lines(color_image, image_config):
     pipeline_result = pipeline_process(color_image, image_config)
     crop_img = pipeline_result["draw_image"]
     result_image = pipeline_result["result_image"]
+    (h, w) = result_image.shape[:2]
 
 # with the arguments:
 # dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
@@ -408,12 +481,13 @@ def get_lane_lines(color_image, image_config):
         for line in detected_lines:
             # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
             # consider only lines with slope between 18 and 60 degrees
-            if 0.4 <= np.abs(line.slope) <= 4:
+            if 0.2 <= np.abs(line.slope) <= 4:
                 #printD("line candidate slope=", line.slope, " degree=", line.degree())
-                line.draw(crop_img, color=(0, 255, 0), thickness=1)
+                line.draw(crop_img, color=(0, 255, 0), thickness=2)
                 candidate_lines.append(line)
             else:
-                line.draw(crop_img, color=(0, 0, 255), thickness=1)
+                #print("missing slope=",np.abs(line.slope))
+                line.draw(crop_img, color=(255, 255, 255), thickness=2)
         # interpolate lines candidates to find both lanes
         left, right = compute_lane_from_candidates(candidate_lines, crop_img, crop_img.shape)
         return pipeline_result, left, right
@@ -490,7 +564,7 @@ def draw_steering_angle(directionX, ticks, nofStraightTicks, crop_img):
 def steering_angle(directionX, crop_img):
     ticks = 8
     straightTicks = 2
-    draw_steering_angle(directionX, ticks, straightTicks, crop_img)
+    #draw_steering_angle(directionX, ticks, straightTicks, crop_img)
     maxAngle = 15
     directionX100 = int(directionX * maxAngle)
     absStraightDistance = maxAngle * straightTicks // ticks
@@ -554,7 +628,7 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     if left_degree == 0:
         lastRightLine = right
         #no line visible on left side, seems to be too far right -> go left
-        drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
+        #drawArray(crop_img, ( int((left.x1 + point[0])// 2), int((left.y1 + point[1]) // 2) ), -1, (0,0,255))
         return "straight", 0
     elif right_degree == 0:
         lastLeftLine = left
@@ -691,8 +765,8 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
     lastLeftLine = left
     lastRightLine = right
     if (crossed):
-        drawLine(crop_img, left, (0,0,255), "left", 2)
-        drawLine(crop_img, right, (0,255,0), "right", 2)
+        drawLine(crop_img, left, (0,0,255), "left", 4)
+        drawLine(crop_img, right, (255,0,0), "right", 4)
         directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
         return crossed, directionString, angle100
     return crossed, None, None
@@ -714,7 +788,7 @@ def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driv
         crossed, directionString, angle100 = calculate_steering_angle_from_double_line(crop_img, left, right)
     elif isRationalLine(left):
         #printXD("only left")
-        if lastRightLine is None:
+        if True or lastRightLine is None:
             #virtual_horizon = Line(w, 0, w, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(left, virtual_horizon)
@@ -728,7 +802,7 @@ def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driv
 
     elif isRationalLine(right):
         #printXD("only right")
-        if lastLeftLine is None:
+        if True or lastLeftLine is None:
             #virtual_horizon = Line(0, 0, 0, h)
             virtual_horizon = Line(0, 0, w, 0)
             crossed, point = line_intersection2(virtual_horizon, right)
