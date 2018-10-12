@@ -25,6 +25,7 @@ class Line:
         self.y2 = np.float32(y2)
 
         self.slope = self.compute_slope()
+        self.degree = self.compute_degree()
         self.bias = self.compute_bias()
         self.length = self.compute_length()
 
@@ -65,7 +66,7 @@ class Line:
 
         cv2.line(img, (self.x1, self.y1), (self.x2, self.y2), color, thickness)
 
-    def degree(self):
+    def compute_degree(self):
         if self.slope < 1.0e+10:
             # - because of missorientation of y1,y2 - origin - left, top
             tangent_angle = degrees(atan(self.slope))
@@ -77,12 +78,24 @@ class Line:
 
     # see https://www.youtube.com/watch?v=O8M4ZErxE-M
     def degree_between(self, line): 
-        return self.degree() + line.degree()
+        return self.degree + line.degree
 
     def printXD(self, text):
         printXD(text," (x,y)=", self.x1, self.y1, " (x,y)=", self.x2, self.y2)
 
-        
+    def draw_filled_area(self, img, line, color=(127,255,0), thickness=3):
+        (h, w) = img.shape[:2]
+        overlay = img.copy()
+        xh = self.fx(h)
+        points = [
+            (xh, h),
+            (self.x2, self.y2),
+            (line.x1, line.y1),
+            (line.x2, line.y2),
+        ]
+        cv2.fillPoly(overlay, np.int_([points]), color)
+        opacity = 0.4
+        cv2.addWeighted(overlay, opacity, img, 1 - opacity, 0, img)
 
 time.sleep(0.1)
 
@@ -132,7 +145,7 @@ def show_thumb(name, image, x_index, y_index):
     resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
     cv2.imshow("Card Detector-"+name, resized);
-    cv2.moveWindow("Card Detector-"+name, x_index * (dim[0] + 20), y_index * (dim[1] + 20));
+    cv2.moveWindow("Card Detector-"+name, x_index * (dim[0] + 5), y_index * (dim[1] + 5));
 
 
 #### ------------------------------------------
@@ -188,13 +201,53 @@ def pipeline_HLS_LUV_LAB(image, parameters):
     channel1 = parameters["channel1"]
     channel2 = parameters["channel2"]
     channel3 = parameters["channel3"]
+    threshold = parameters["threshold"]
+    max = parameters["max"]
+    type = parameters["type"]
+
     channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     HLS_channels = cv2.split(channels_image)
+    HLS_image = HLS_channels[channel1]
+
     channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LUV)
     LUV_channels = cv2.split(channels_image)
+    LUV_image = LUV_channels[channel2]
+
     channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
     LAB_channels = cv2.split(channels_image)
-    result_image = cv2.merge((HLS_channels[channel1], LUV_channels[channel2], LAB_channels[channel3]))
+    LAB_image = LAB_channels[channel3]
+
+    return cv2.merge((HLS_image, LUV_image, LAB_image))
+
+
+
+# based on https://www.linkedin.com/pulse/advanced-lane-finding-pipeline-tiba-razmi/
+def pipeline_HLS_LUV_LAB_Threshold(image, parameters):
+    channel1 = parameters["channel1"]
+    channel2 = parameters["channel2"]
+    channel3 = parameters["channel3"]
+    threshold = parameters["threshold"]
+    max = parameters["max"]
+    type = parameters["type"]
+
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    HLS_channels = cv2.split(channels_image)
+    HLS_image = HLS_channels[channel1]
+    ret, HLS_image2 = cv2.threshold(HLS_image, threshold, max, type)
+
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LUV)
+    LUV_channels = cv2.split(channels_image)
+    LUV_image = LUV_channels[channel2]
+    ret, LUV_image2 = cv2.threshold(LUV_image, threshold, max, type)
+
+    channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    LAB_channels = cv2.split(channels_image)
+    LAB_image = LAB_channels[channel3]
+    ret, LAB_image2 = cv2.threshold(LAB_image, threshold, max, type)
+
+    result_image = cv2.merge((HLS_image2, LUV_image2, LAB_image2))
+
+
     return result_image
 
 
@@ -337,7 +390,7 @@ def execute_pipeline_key(key_in, image_config):
             if not off and "keys" in config:
                 for key, object in config["keys"].items():
                     if ord(key) == key_in:
-                        config["parameters"][object["name"]] = object["f"](config["parameters"])
+                        config["parameters"][object["name"]] = object["f"](config["parameters"][object["name"]])
                         printD("execute ",config["type"]," key=", key, " new ",object["name"],"=", config["parameters"][object["name"]])
                         return True, image_config
     return False, image_config
@@ -482,7 +535,7 @@ def get_lane_lines(color_image, image_config):
             # 0.5 = 63 degree, 1 = 45 degree, 2 = 26 degree, 3 = 18 degree
             # consider only lines with slope between 18 and 60 degrees
             if 0.2 <= np.abs(line.slope) <= 4:
-                #printD("line candidate slope=", line.slope, " degree=", line.degree())
+                #printD("line candidate slope=", line.slope, " degree=", line.degree
                 line.draw(crop_img, color=(0, 255, 0), thickness=2)
                 candidate_lines.append(line)
             else:
@@ -564,7 +617,7 @@ def draw_steering_angle(directionX, ticks, nofStraightTicks, crop_img):
 def steering_angle(directionX, crop_img):
     ticks = 8
     straightTicks = 2
-    #draw_steering_angle(directionX, ticks, straightTicks, crop_img)
+    draw_steering_angle(directionX, ticks, straightTicks, crop_img)
     maxAngle = 15
     directionX100 = int(directionX * maxAngle)
     absStraightDistance = maxAngle * straightTicks // ticks
@@ -619,8 +672,8 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
     directionString, angle100 = steering_angle(directionX, crop_img)
     (h, w) = crop_img.shape[:2]
 
-    left_degree = left.degree()
-    right_degree = right.degree()
+    left_degree = left.degree
+    right_degree = right.degree
     deg = left.degree_between(right)
 
     #printXD("degree =", str(deg), " diff=", (abs(left_degree - right_degree))," left=", left_degree, " right=", right_degree)
@@ -767,6 +820,7 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
     if (crossed):
         drawLine(crop_img, left, (0,0,255), "left", 4)
         drawLine(crop_img, right, (255,0,0), "right", 4)
+        left.draw_filled_area(crop_img, right)
         directionString, angle100 = calculate_steering_angle_from_single_line(point, left, right, crop_img)
         return crossed, directionString, angle100
     return crossed, None, None
