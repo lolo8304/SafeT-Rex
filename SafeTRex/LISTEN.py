@@ -17,8 +17,9 @@ class Hello(Resource):
         return {'hello back': "hello"}  
 
 class Stop(Resource):
-    def kill(self):
+    def get(self):
         sys.exit(1)
+        return "{'killed':'true'}"
 
 
 class Speed(Resource):
