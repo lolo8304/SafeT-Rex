@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from car import *
+from .car import *
 
 app = Flask(__name__)
 api = Api(app)
