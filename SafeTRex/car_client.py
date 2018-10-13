@@ -3,7 +3,7 @@ from requests_futures.sessions import FuturesSession
 import time
 
 class CarStateMachine():
-    def __init__(self, url="http://192.168.6.107:5002", recording=0, init=30, simulate=False):
+    def __init__(self, url="http://localhost:5002", recording=0, init=30, simulate=False):
         self.__state = ("RUN", init)
         self.__url = url
         self.__recordingNo = recording
