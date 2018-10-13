@@ -9,6 +9,8 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-r", "--recording", required=False, type=int, default=0,
 	help="number to write files accordinly")
+ap.add_argument("-u", "--url", required=False, type=int, default="http://192.168.6.101:5002",
+	help="remote car full URL with port")
 args = vars(ap.parse_args())
 
 
@@ -50,7 +52,7 @@ quit = "q"
 stopSpeed = ","
 radiusDemo = "r"
 
-driver = CarStateMachine(recording=args["recording"], init=-1, simulate=False)
+driver = CarStateMachine(url=args["url"], recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
