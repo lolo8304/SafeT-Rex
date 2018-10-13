@@ -42,7 +42,8 @@ class CarHandler:
         sr.run()
 
     def shutdown(self):
-        lanes.join()
+        #lanes.join()
+        pass
 
 
 def releaseVideo(video):
