@@ -1,4 +1,3 @@
-cd $HOME/SafeT-Rex
+cd $HOME/git/SafeT-Rex
 git pull
-cd $HOME/SafeT-Rex
 python LISTEN.py
