@@ -68,7 +68,7 @@ class StreamReader:
 
     def shutdown(self):
         self.__stopEvent.set()
-        
+
     def isShutdown(self):
         return self.__stopEvent.isSet()
     def isRunning(self):
@@ -122,6 +122,9 @@ class StreamReader:
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
+            if not self.isRunning():
+                break
+        print("image capturing stopped")
 
         #while (True):
             #self.currentimage 
