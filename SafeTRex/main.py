@@ -66,6 +66,11 @@ class StreamReader:
 
         #ret, self.currentimage = self.__cam.read()
 
+    def isShutdown(self):
+        return self.__stopEvent.isSet()
+    def isRunning(self):
+        return not self.isShutdown()
+
     def getCurrentImage(self):
         image = None
         image = self.currentimage
