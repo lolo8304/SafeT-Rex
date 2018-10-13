@@ -10,15 +10,15 @@ api = Api(app)
 __driver = CarStateMachine(0)
 GPIO.setwarnings(False)
 
-stopEvent = threading.Event()
+eventStopper = None
 
 def shutdown_server():
-    global stopEvent
+    global eventStopper
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
-    stopEvent.set()
+    eventStopper.shutdown()
     sys.exit(1)
     exit()
 
@@ -75,6 +75,8 @@ api.add_resource(Speed, '/speed/<speed>')
 api.add_resource(SpeedFactor, '/speedFactor/<speedFactor>')  
 api.add_resource(Steer, '/steer/<steer>')
 
-def startServer():
+def startServer(sr: None):
+    global eventStopper
+    eventStopper = sr
     app.run(host= '0.0.0.0', port='5002')
 

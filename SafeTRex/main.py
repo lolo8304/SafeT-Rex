@@ -16,10 +16,6 @@ fast = 50
 left = -30
 right = 30
 
-carServer = threading.Thread(target=startServer, args=[])
-carServer.start()
-
-
 class CarHandler:
     def __init__(self, args):
         self.__args = args
@@ -32,12 +28,16 @@ class CarHandler:
         time.sleep(0.1)
 
         #sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
-        lanes = threading.Thread(target=lanedetector, args=[sr, self.__driver])
-
         #print("Starting SignDetection Thread...")
         #sign.start()
+
+        lanes = threading.Thread(target=lanedetector, args=[sr, self.__driver])
         print("Starting LaneDetector Thread...")
         lanes.start()
+
+        carServer = threading.Thread(target=startServer, args=[sr])
+        carServer.start()
+
         print("Starting StreamReader...")
         sr.run()
 
@@ -66,6 +66,8 @@ class StreamReader:
 
         #ret, self.currentimage = self.__cam.read()
 
+    def shutdown(self):
+        self.__stopEvent.set()
     def isShutdown(self):
         return self.__stopEvent.isSet()
     def isRunning(self):
