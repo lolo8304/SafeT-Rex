@@ -68,6 +68,7 @@ class StreamReader:
 
     def shutdown(self):
         self.__stopEvent.set()
+        
     def isShutdown(self):
         return self.__stopEvent.isSet()
     def isRunning(self):

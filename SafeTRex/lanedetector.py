@@ -21,4 +21,5 @@ class LineDetector():
         while(self.__sr.isRunning()):
             image  = self.__sr.getCurrentImage()
             detect_lane(image, self.__image_config, self.__sr.isDebug(), self.__sr.isXDebug(), self.__driver)
-            time.sleep(0.5)
+            time.sleep(0.1)
+        print("lane detector stopped due to shutdown")
