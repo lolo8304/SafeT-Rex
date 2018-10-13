@@ -1,12 +1,26 @@
 from flask import Flask
 from flask_restful import Resource, Api
+from flask import request
 from .car import *
 import sys
+import threading
 
 app = Flask(__name__)
 api = Api(app)
 __driver = CarStateMachine(0)
 GPIO.setwarnings(False)
+
+stopEvent = threading.Event()
+
+def shutdown_server():
+    global stopEvent
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    stopEvent.set()
+    sys.exit(1)
+
 
 def getDriver():
     global __driver
@@ -18,7 +32,7 @@ class Hello(Resource):
 
 class Stop(Resource):
     def get(self):
-        sys.exit(1)
+        shutdown_server()
         return "{'killed':'true'}"
 
 
