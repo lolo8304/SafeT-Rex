@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from .car import *
+import sys
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,6 +15,10 @@ def getDriver():
 class Hello(Resource):
     def get(self):
         return {'hello back': "hello"}  
+
+class Stop(Resource):
+    def kill(self):
+        sys.exit(1)
 
 
 class Speed(Resource):
@@ -49,6 +54,7 @@ class Steer(Resource):
 
 
 api.add_resource(Hello, '/hello')  
+api.add_resource(Stop, '/kill')  
 api.add_resource(Speed, '/speed/<speed>')  
 api.add_resource(SpeedFactor, '/speedFactor/<speedFactor>')  
 api.add_resource(Steer, '/steer/<steer>')

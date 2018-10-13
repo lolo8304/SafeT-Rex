@@ -113,7 +113,7 @@ class CarStateMachine():
             ## speed inc 5 per 5 degree
             oldAngle = self.getAngle()
             adapt = (abs(newAngle) - abs(oldAngle)) // 2
-            print("adapt speed (old=",oldAngle,",new=",newAngle,") by ",adapt)
+            #print("adapt speed (old=",oldAngle,",new=",newAngle,") by ",adapt)
             return adapt
         else:
             return 0

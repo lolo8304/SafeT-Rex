@@ -104,5 +104,8 @@ class CarStateMachineClient():
     def decSpeedFactor(self):
         self.SetRemoteValue("speedFactor", "dec")
 
+    def kill(self):
+        self.SetRemoteCall("kill")
+
     def close(self):
         pass

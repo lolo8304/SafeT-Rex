@@ -51,12 +51,13 @@ stop = "k"
 quit = "q"
 stopSpeed = ","
 radiusDemo = "r"
+kill = "!"
 
 driver = CarStateMachineClient(url=args["url"], recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlikmxyqse,r")
+    key = waitForKey(keys="jlikmxyqse,r!")
     if (key == left):
       driver.left()
     elif key == right:
@@ -77,6 +78,10 @@ if __name__ == '__main__':
     elif key == speedEdit:
       speed = input("Enter your speed (0-100)? ")
       driver.setRUN(int(speed))
+    elif key == kill:
+      kill = input("enter yes to kill? ")
+      if (kill == "yes"):
+        driver.kill()
 
 
     elif key == radiusDemo:
