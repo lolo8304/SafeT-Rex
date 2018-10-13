@@ -24,7 +24,7 @@ class CarHandler:
 
     def start(self):
         self.__driver.setRUN(30)
-        sr = StreamReader(self.__args)
+        sr = StreamReader(self, self.__args)
         time.sleep(0.1)
 
         #sign = threading.Thread(target=signdetection, args=[sr, self.__driver])
@@ -41,12 +41,17 @@ class CarHandler:
         print("Starting StreamReader...")
         sr.run()
 
+    def shutdown(self):
+        lanes.join()
+
+
 def releaseVideo(video):
     video.release()
 
 
 class StreamReader:
-    def __init__(self, args):
+    def __init__(self, carhandler, args):
+        self.__carhandler = carhandler
         self.__debug = args["debug"]
         self.__xdebug = args["xdebug"]
         self.__stopEvent = threading.Event()
@@ -68,6 +73,7 @@ class StreamReader:
 
     def shutdown(self):
         self.__stopEvent.set()
+        self.__carhandler.shutdown()
 
     def isShutdown(self):
         return self.__stopEvent.isSet()
