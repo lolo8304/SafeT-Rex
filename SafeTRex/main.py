@@ -49,6 +49,7 @@ class StreamReader:
     def __init__(self, args):
         self.__debug = args["debug"]
         self.__xdebug = args["xdebug"]
+        self.__stopEvent = threading.Event()
         self.__recordingNo = args["recording"]
         self.__video = None
 
