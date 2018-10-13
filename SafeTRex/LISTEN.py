@@ -54,5 +54,5 @@ api.add_resource(SpeedFactor, '/speedFactor/<speedFactor>')
 api.add_resource(Steer, '/steer/<steer>')
 
 #if __name__ == '__main__':
-    app.run(host= '0.0.0.0', port='5002')
-    print("server started")
+app.run(host= '0.0.0.0', port='5002')
+print("server started")
