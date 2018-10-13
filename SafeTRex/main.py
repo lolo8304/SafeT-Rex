@@ -7,6 +7,7 @@ from picamera import PiCamera
 import threading
 import os
 from .LISTEN import getDriver
+from .LISTEn import startServer
 
 debug = True
 
@@ -14,6 +15,10 @@ slow = 30
 fast = 50
 left = -30
 right = 30
+
+carServer = threading.Thread(target=startServer, args=[])
+carServer.start()
+
 
 class CarHandler:
     def __init__(self, args):
