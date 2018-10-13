@@ -3,6 +3,7 @@ import sys
 import termios
 import contextlib
 from car_client import *
+from time import sleep
 
 import argparse
 ap = argparse.ArgumentParser()
@@ -46,12 +47,14 @@ decSpeedFactor = "y"
 speedEdit = "e"
 stop = "k"
 quit = "q"
+stopSpeed = ","
+radiusDemo = "r"
 
 driver = CarStateMachine(recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlikmxyqse")
+    key = waitForKey(keys="jlikmxyqse,r")
     if (key == left):
       driver.left()
     elif key == right:
@@ -67,9 +70,23 @@ if __name__ == '__main__':
     elif key == stop:
       driver.setRUN(0)
       driver.setAngle(0)
+    elif key == stopSpeed:
+      driver.setRUN(0)
     elif key == speedEdit:
       speed = input("Enter your speed (0-100)? ")
       driver.setRUN(int(speed))
+
+
+    elif key == radiusDemo:
+      driver.setRUN(0)
+      driver.setAngle(-20)
+      time.sleep(2.0)
+      driver.setRUN(10)
+      time.sleep(2.0)
+      driver.setRUN(20)
+      time.sleep(8.0)
+      driver.setRUN(0)
+
     elif key == quit:
       driver.setRUN(0)
       driver.setAngle(0)

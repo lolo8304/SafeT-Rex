@@ -59,7 +59,7 @@ class ServoCar(object):
         self.__steerFactor = float(self.__steer.max) / 100
 
         # Geschwindigkeit 0...100
-        self.__speed = Servo(24, 20, 0, 0, 100)
+        self.__speed = Servo(24, 15, 0, 0, 100)
         self.__speedFactor = 0.45
 
     def hello(self):

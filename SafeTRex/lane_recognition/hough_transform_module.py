@@ -86,6 +86,7 @@ class Line:
     def draw_filled_area(self, img, line, color=(127,255,0), thickness=3):
         (h, w) = img.shape[:2]
         overlay = img.copy()
+        #calc x crossed point at position y = h
         xh = self.fx(h)
         points = [
             (xh, h),
