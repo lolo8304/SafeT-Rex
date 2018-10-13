@@ -20,6 +20,7 @@ def shutdown_server():
     func()
     stopEvent.set()
     sys.exit(1)
+    exit()
 
 
 def getDriver():
@@ -76,5 +77,4 @@ api.add_resource(Steer, '/steer/<steer>')
 
 def startServer():
     app.run(host= '0.0.0.0', port='5002')
-    print("server started")
 
