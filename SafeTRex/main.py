@@ -6,6 +6,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import threading
 import os
+import sys
 from .LISTEN import getDriver
 from .LISTEN import startServer
 
@@ -42,7 +43,7 @@ class CarHandler:
         sr.run()
 
     def shutdown(self):
-        #lanes.join()
+        sys.exit()
         pass
 
 
