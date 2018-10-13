@@ -43,8 +43,7 @@ class CarHandler:
         sr.run()
 
     def shutdown(self):
-        sys.exit()
-        pass
+        raise Exception('shutdown!')
 
 
 def releaseVideo(video):
