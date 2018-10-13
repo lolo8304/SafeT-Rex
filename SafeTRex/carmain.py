@@ -10,7 +10,7 @@ ap.add_argument("-c", "--steer", required=False, type=int,
 	help="steer mode")
 args = vars(ap.parse_args())
 
-__driver = CarStateMachine(0)
+__driver = CarStateMachineClient(0)
 #__car = ServoCar()
 
 if (args["speed"] is not None):

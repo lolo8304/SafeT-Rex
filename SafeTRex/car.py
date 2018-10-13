@@ -118,6 +118,14 @@ class CarStateMachine():
         else:
             return 0
 
+    def setSpeed(self, speed):
+        if speed == "faster" or speed == "inc":
+            self.faster()
+        elif speed == "slower" or speed == "dec":
+            self.slower()
+        else:
+            self.setRUN(int(speed))
+
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]

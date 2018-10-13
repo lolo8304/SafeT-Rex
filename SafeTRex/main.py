@@ -6,6 +6,8 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import threading
 import os
+from .LISTEN import getDriver
+
 debug = True
 
 slow = 30
@@ -16,7 +18,8 @@ right = 30
 class CarHandler:
     def __init__(self, args):
         self.__args = args
-        self.__driver = CarStateMachine(recording=args["recording"], init=50)
+        #self.__driver = CarStateMachineClient(recording=args["recording"], init=50)
+        self.__driver = getDriver()
 
     def start(self):
         self.__driver.setRUN(30)

@@ -9,7 +9,7 @@ from lane_recognition.hough_transform_module import detect_lane
 from lane_recognition.hough_transform_module import execute_pipeline_key
 from lane_recognition.hough_configuration import configurations
 
-from car_client import CarStateMachine
+from car_client import CarStateMachineClient
 import atexit
 import os
 
@@ -78,7 +78,7 @@ else:
 #rawCapture = PiRGBArray(camera, size=(320, 240))
 video = None
 
-driver = CarStateMachine(recording=args["recording"], init=0, simulate=True)
+driver = CarStateMachineClient(recording=args["recording"], init=0, simulate=True)
 
 def releaseVideo(video):
     video.release()

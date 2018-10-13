@@ -52,7 +52,7 @@ quit = "q"
 stopSpeed = ","
 radiusDemo = "r"
 
-driver = CarStateMachine(url=args["url"], recording=args["recording"], init=-1, simulate=False)
+driver = CarStateMachineClient(url=args["url"], recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):

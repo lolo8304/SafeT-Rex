@@ -2,9 +2,10 @@
 from requests_futures.sessions import FuturesSession
 import time
 
-class CarStateMachine():
-    def __init__(self, url="http://localhost:5002", recording=0, init=30, simulate=False):
+class CarStateMachineClient():
+    def __init__(self, driver=None, url="http://localhost:5002", recording=0, init=30, simulate=False):
         self.__state = ("RUN", init)
+        self.__driver = driver
         self.__url = url
         self.__recordingNo = recording
         self.__recordingFile = ""
@@ -39,6 +40,14 @@ class CarStateMachine():
             future_one = self.__futureSession.get(url)
             #requests.get(url)
 
+    def setSpeed(self, speed):
+        if speed == "faster" or speed == "inc":
+            self.faster()
+        elif speed == "slower" or speed == "dec":
+            self.slower()
+        else:
+            self.setRUN(int(speed))
+
     def setRUN(self, tempo):
         if tempo == -1:
             tempo = self.__state[1]
@@ -46,30 +55,37 @@ class CarStateMachine():
         self.__state = ("RUN", tempo)
 
     def faster(self):
-        self.SetRemoteValue("speed", "faster")
+        if self.__driver: self.__driver.speed("faster")
+        else: self.SetRemoteValue("speed", "faster")
     def slower(self):
-        self.SetRemoteValue("speed", "slower")
+        if self.__driver: self.__driver.speed("slower")
+        else: self.SetRemoteValue("speed", "slower")
 
 
     def setSTOP(self):
         print("STOPSIGN!!!!")
         if time.time() - self.lastSTOP > 2:
-            self.SetRemoteValue("speed", 0)
+            if self.__driver: self.__driver.speed(0)
+            else: self.SetRemoteValue("speed", 0)
             self.__state = ("STOP", 0)
             print("stoping. . .")
             time.sleep(5)
-            self.SetRemoteValue("speed", 30)
+            if self.__driver: self.__driver.speed(30)
+            else: self.SetRemoteValue("speed", 30)
             self.__state = ("RUN", 30)
             self.lastSTOP = time.time()
         print("Last Stop to recent!")
 
     def setAngle(self, angle):
-        self.SetRemoteValue("steer", -angle)
+        if self.__driver: self.__driver.setAngle(-angle)
+        else: self.SetRemoteValue("steer", -angle)
         
     def left(self):
-        self.SetRemoteValue("steer", "left")
+        if self.__driver: self.__driver.left()
+        else: self.SetRemoteValue("steer", "left")
     def right(self):
-        self.SetRemoteValue("steer", "right")
+        if self.__driver: self.__driver.right()
+        else: self.SetRemoteValue("steer", "right")
 
     def setREDLIGHT(self):
         print("Red Light")
