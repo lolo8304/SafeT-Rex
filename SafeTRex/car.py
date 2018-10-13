@@ -55,7 +55,7 @@ class ServoCar(object):
 
     def __init__(self):
         # Steuerung -100 ... 100
-        self.__steer = Servo(23, 100, 7.5, 45, 135)
+        self.__steer = Servo(23, 50, 7.5, 45, 135)
         self.__steerFactor = float(self.__steer.max) / 100
 
         # Geschwindigkeit 0...100
