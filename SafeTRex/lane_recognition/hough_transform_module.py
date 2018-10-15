@@ -202,9 +202,6 @@ def pipeline_HLS_LUV_LAB(image, parameters):
     channel1 = parameters["channel1"]
     channel2 = parameters["channel2"]
     channel3 = parameters["channel3"]
-    threshold = parameters["threshold"]
-    max = parameters["max"]
-    type = parameters["type"]
 
     channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     HLS_channels = cv2.split(channels_image)
