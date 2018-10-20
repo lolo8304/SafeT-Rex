@@ -156,18 +156,21 @@ def show_thumb(name, image, x_index, y_index):
 
 ## crop image
 ##         "algorithm" : "bottom", "top"
-##         "factor" : 0.33333333
+##         "factor" : 0.33333333 to remove from top or bottom or empty // default 0.0
+##         "fix" : 30 number of pixels to remove fix from top or bottom
 def pipeline_Crop(image, parameters):
     alg = parameters["algorithm"]
-    factor = parameters["factor"]
+    factor = parameters["factor"] if "factor" in parameters else 0.0
+    fix = parameters["fix"] if "fix" in parameters else 0
     (h, w) = image.shape[:2]
     image = image.copy()
     if alg == "bottom":
-        image = image[0:h - int(h * factor), 0:w]
+        image = image[0:h - int(h * factor + fix), 0:w]
     elif alg == "top":
-        image = image[int(h * factor):h, 0:w]
+        image = image[int(h * factor + fix):h, 0:w]
     return image
 
+# convert to Gray channel
 # no parameters
 def pipeline_Grey(image, parameters):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

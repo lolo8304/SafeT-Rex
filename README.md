@@ -10,6 +10,9 @@ context: we are in 2030 and autonomous vehicles are reality. We as AA-hackers wo
 2019-09-27 14:31 - here is the first successful trial with lane detection - not perfect yet but a start.
 [![Watch the video](https://raw.github.com/lolo8304/SafeT-Rex/master/youtube-preview.png)](https://www.youtube.com/watch?v=79lioIJ-ZHQ)
 
+## lane detection
+the hardest thing is the lane detection algorith. checkout our detailed [readme](/lanedetector.md)
+
 
 ## Features
 - turn an existing RC car into a software controllable car using Arduino, raspberry pi3, picam
@@ -113,7 +116,7 @@ tbd
 tbd
 
 ### Lane detector
-tbd
+test our lane detector checkout [readme](/lanedetector.md)
 
 ## traffic signs or others
 
