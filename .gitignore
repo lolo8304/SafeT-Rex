@@ -115,5 +115,5 @@ traffic-signs-classification/data
 .idea/SafeT-Rex.iml
 .idea/vcs.xml
 .idea/inspectionProfiles/Project_Default.xml
-*.h264
 *.csv
+safet-rex-recording-*.h264
