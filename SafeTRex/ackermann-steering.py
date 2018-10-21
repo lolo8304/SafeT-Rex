@@ -1,5 +1,5 @@
 import math
-from lane_recognition.Line import Line
+from lane_recognition import *
 
 class car_steering:
     def __init__(self, L, T):
