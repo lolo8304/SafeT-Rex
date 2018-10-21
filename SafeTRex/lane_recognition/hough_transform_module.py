@@ -380,14 +380,14 @@ def compute_lane_from_candidates(line_candidates, crop_img, img_shape):
     pos_lines = pos_lines_closests
     for pos in pos_lines_closests:
         pass
-        #pos.draw(crop_img, thickness=5)
+        pos.draw(crop_img, color=(0,255,0),thickness=5)
 
     neg_lines = [l for l in line_candidates if l.slope < 0]
     neg_lines_closests = keep_closests(neg_lines, lambda line: line.x1, img_shape[1], 30 )
     neg_lines = neg_lines_closests
     for neg in neg_lines_closests:
         pass
-        #neg.draw(crop_img, thickness=5)
+        neg.draw(crop_img, color=(0,255,0),thickness=5)
 
     # interpolate biases and slopes to compute equation of line that approximates left lane
     # median is employed to filter outliers
