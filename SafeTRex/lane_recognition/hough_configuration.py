@@ -19,12 +19,21 @@ def axa_hackathon_lane():
         "type" : "Crop",
         "parameters" : {
           "algorithm" : "top",
-          "factor" : 0.0
+          "fix" : 40
         }
       },
       {
         "type" : "HLS_LUV_LAB",
         "draw" : True,
+        "parameters": {
+          "channel1" : 1,
+          "channel2" : 0,
+          "channel3" : 1
+        }
+      },
+      {
+        "type" : "HLS_LUV_LAB_Threshold",
+        "off" : True,
         "parameters": {
           "channel1" : 1,
           "channel2" : 0,

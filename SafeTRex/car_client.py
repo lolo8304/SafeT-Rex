@@ -89,22 +89,27 @@ class CarStateMachineClient():
 
     def setREDLIGHT(self):
         print("Red Light")
-        self.SetRemoteValue("speed", 0)
+        self.setSpeed(30)
         self.__state = ("REDLIGHT", 0)
 
     def setGREENLIGHT(self):
         print("Go!")
-        self.setRUN(30)
+        self.setSpeed(30)
 
     def setSpeedFactor(self, value):
-        self.SetRemoteValue("speedFactor", format(value, '.2f'))
+        if self.__driver: self.__driver.setSpeedFactor(value)
+        else: self.SetRemoteValue("speedFactor", format(value, '.2f'))
 
     def incSpeedFactor(self):
-        self.SetRemoteValue("speedFactor", "inc")
+        if self.__driver: self.__driver.incSpeedFactor()
+        else: self.SetRemoteValue("speedFactor", "inc")
     def decSpeedFactor(self):
-        self.SetRemoteValue("speedFactor", "dec")
+        if self.__driver: self.__driver.deSpeedFactor()
+        else: self.SetRemoteValue("speedFactor", "dec")
 
     def kill(self):
+        self.setSpeed(0)
+        self.setAngle(0)
         self.SetRemoteCall("kill")
 
     def close(self):

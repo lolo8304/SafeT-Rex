@@ -10,93 +10,7 @@ from math import degrees
 from math import sqrt
 from collections import deque
 import os
-
-class Line:
-    """
-    A Line is defined from two points (x1, y1) and (x2, y2) as follows:
-    y - y1 = (y2 - y1) / (x2 - x1) * (x - x1)
-    Each line has its own slope and intercept (bias).
-    """
-    def __init__(self, x1, y1, x2, y2):
-
-        self.x1 = np.float32(x1)
-        self.y1 = np.float32(y1)
-        self.x2 = np.float32(x2)
-        self.y2 = np.float32(y2)
-
-        self.slope = self.compute_slope()
-        self.degree = self.compute_degree()
-        self.bias = self.compute_bias()
-        self.length = self.compute_length()
-
-    def compute_slope(self):
-        return (self.y2 - self.y1) / (self.x2 - self.x1 + np.finfo(float).eps)
-
-    def compute_length(self):
-        return sqrt((self.y2 - self.y1) ** 2 + (self.x2 - self.x1) ** 2)
-
-    def compute_bias(self):
-        return self.y1 - self.slope * self.x1
-
-    def get_coords(self):
-        return np.array([self.x1, self.y1, self.x2, self.y2])
-
-    def set_coords(self, x1, y1, x2, y2):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-
-    # y = mx+b
-    def fy(self, x):
-        return self.slope * x + self.bias
-
-    # x = (y-b) / m
-    def fx(self, y):
-        return (y - self.bias) / self.slope
-
-    def draw(self, img, color=(0, 255, 255), thickness=3):
-
-        # xx1 = max(0, self.x1)
-        # yy1 = max(0, self.y1)
-        # xx2 = max(0, self.x2)
-        # yy2 = max(0, self.y2)
-        # printD(xx1, yy1, xx2, yy2)
-        # cv2.line(img, (xx1, yy1), (xx2, yy2), color, thickness)
-
-        cv2.line(img, (self.x1, self.y1), (self.x2, self.y2), color, thickness)
-
-    def compute_degree(self):
-        if self.slope < 1.0e+10:
-            # - because of missorientation of y1,y2 - origin - left, top
-            tangent_angle = degrees(atan(self.slope))
-            if self.y2 < self.y1:
-                tangent_angle = -tangent_angle
-            return 90 - tangent_angle
-        else:
-            return 0
-
-    # see https://www.youtube.com/watch?v=O8M4ZErxE-M
-    def degree_between(self, line): 
-        return self.degree + line.degree
-
-    def printXD(self, text):
-        printXD(text," (x,y)=", self.x1, self.y1, " (x,y)=", self.x2, self.y2)
-
-    def draw_filled_area(self, img, line, color=(127,255,0), thickness=3):
-        (h, w) = img.shape[:2]
-        overlay = img.copy()
-        #calc x crossed point at position y = h
-        xh = self.fx(h)
-        points = [
-            (xh, h),
-            (self.x2, self.y2),
-            (line.x1, line.y1),
-            (line.x2, line.y2),
-        ]
-        cv2.fillPoly(overlay, np.int_([points]), color)
-        opacity = 0.4
-        cv2.addWeighted(overlay, opacity, img, 1 - opacity, 0, img)
+from .Line import Line
 
 time.sleep(0.1)
 
@@ -156,18 +70,21 @@ def show_thumb(name, image, x_index, y_index):
 
 ## crop image
 ##         "algorithm" : "bottom", "top"
-##         "factor" : 0.33333333
+##         "factor" : 0.33333333 to remove from top or bottom or empty // default 0.0
+##         "fix" : 30 number of pixels to remove fix from top or bottom
 def pipeline_Crop(image, parameters):
     alg = parameters["algorithm"]
-    factor = parameters["factor"]
+    factor = parameters["factor"] if "factor" in parameters else 0.0
+    fix = parameters["fix"] if "fix" in parameters else 0
     (h, w) = image.shape[:2]
     image = image.copy()
     if alg == "bottom":
-        image = image[0:h - int(h * factor), 0:w]
+        image = image[0:h - int(h * factor + fix), 0:w]
     elif alg == "top":
-        image = image[int(h * factor):h, 0:w]
+        image = image[int(h * factor + fix):h, 0:w]
     return image
 
+# convert to Gray channel
 # no parameters
 def pipeline_Grey(image, parameters):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -202,9 +119,6 @@ def pipeline_HLS_LUV_LAB(image, parameters):
     channel1 = parameters["channel1"]
     channel2 = parameters["channel2"]
     channel3 = parameters["channel3"]
-    threshold = parameters["threshold"]
-    max = parameters["max"]
-    type = parameters["type"]
 
     channels_image = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     HLS_channels = cv2.split(channels_image)
@@ -402,15 +316,11 @@ def execute_pipeline_key(key_in, image_config):
 
 
 def hough_lines_detection(img, rho, theta, threshold, min_line_len, max_line_gap):
-    """
-    `img` should be the output of a Canny transform.
-    """
     lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len,
                             maxLineGap=max_line_gap)
     return lines
 
 ### start closest lines
-
 
 def find_longest_none_zero(array, size):
     # example [0 [obj] 0 0 0 0 0 0 [obj] [obj] [obj,obj] [obj,obj,obj] 0 [obj] [obj,obj] ]
@@ -470,14 +380,14 @@ def compute_lane_from_candidates(line_candidates, crop_img, img_shape):
     pos_lines = pos_lines_closests
     for pos in pos_lines_closests:
         pass
-        #pos.draw(crop_img, thickness=5)
+        pos.draw(crop_img, color=(0,255,0),thickness=5)
 
     neg_lines = [l for l in line_candidates if l.slope < 0]
     neg_lines_closests = keep_closests(neg_lines, lambda line: line.x1, img_shape[1], 30 )
     neg_lines = neg_lines_closests
     for neg in neg_lines_closests:
         pass
-        #neg.draw(crop_img, thickness=5)
+        neg.draw(crop_img, color=(0,255,0),thickness=5)
 
     # interpolate biases and slopes to compute equation of line that approximates left lane
     # median is employed to filter outliers
@@ -549,35 +459,10 @@ def get_lane_lines(color_image, image_config):
         return pipeline_result, None, None
 
 
-def line_intersection2(line1, line2):
-    if (line1 is not None and line2 is not None):
-        return line_intersection( ( (line1.x1, line1.y1), (line1.x2, line1.y2)), ((line2.x1, line2.y1), (line2.x2, line2.y2)) )
-    else:
-        return False, None
-
-
-#Finds the intersection of two lines, or returns false.
-#The lines are defined by (o1, p1) and (o2, p2).
-
-def det(a, b):
-    return a[0] * b[1] - a[1] * b[0]
-
-def line_intersection(line1, line2):
-    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
-    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]) #Typo was here
-
-
-    div = det(xdiff, ydiff)
-    if div == 0:
-       return False, None
-
-    d = (det(*line1), det(*line2))
-    x = det(d, xdiff) / div
-    y = det(d, ydiff) / div
-    return True, (x, y)
 
 def drawLine(crop_img, line, color=(0,255,0), text="", tickness=4):
-    line.printXD(text)
+    if (isXDebug()):
+        line.printXD(text)
     if isRationalLine(line):
         if isDebug():
             cv2.line(crop_img,(line.x1,line.y1),(line.x2,line.y2),color,tickness)
@@ -708,28 +593,6 @@ def calculate_steering_angle_from_single_line(point, left, right, crop_img):
         return "straight", 0
 
 
-def test():
-  testL = Line(0, 360, 240, 0)
-  testR = Line(480, 360, 240, 0)
-  crossed, point = line_intersection2(testL, testR)
-  printD("test intersection ", point)
-
-  testL = Line(0, 360, 240, 0)
-  testR = Line(480, 360, 480, 0)
-  crossed, point = line_intersection2(testL, testR)
-  printD("test intersection ", point)
-
-  p = (240, 0)
-  testDirectionX = steering_directionX(p, testL, testR, None, 480)
-  printD("test direct for ", p, " is ", testDirectionX)
-
-  p = (-2147483600.0, -1994294800.0)
-  testDirectionX = steering_directionX(p, testL, testR, None, 480)
-  printD("test direct for ", p, " is ", testDirectionX)
-
-  p = (480, 0)
-  testDirectionX = steering_directionX(p, testL, testR, None, 480)
-  printD("test direct for ", p, " is ", testDirectionX)
 
 CONST_DIR = 0
 CONST_ANGLE = 1
@@ -815,7 +678,7 @@ def sendIncrementToMotor(directionX, angle100, driver = None):
 def calculate_steering_angle_from_double_line(crop_img, left, right):
     global lastLeftLine
     global lastRightLine
-    crossed, point = line_intersection2(left, right)
+    crossed, point = left.line_intersection(right)
     lastLeftLine = left
     lastRightLine = right
     if (crossed):
@@ -846,7 +709,7 @@ def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driv
         if True or lastRightLine is None:
             #virtual_horizon = Line(w, 0, w, h)
             virtual_horizon = Line(0, 0, w, 0)
-            crossed, point = line_intersection2(left, virtual_horizon)
+            crossed, point = left.line_intersection(virtual_horizon)
             if crossed:
                 virtual_horizon = Line(point[0], 0, point[0], h)
                 drawLine(crop_img, left, (0,0,255), "left")
@@ -860,7 +723,7 @@ def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driv
         if True or lastLeftLine is None:
             #virtual_horizon = Line(0, 0, 0, h)
             virtual_horizon = Line(0, 0, w, 0)
-            crossed, point = line_intersection2(virtual_horizon, right)
+            crossed, point = virtual_horizon.line_intersection(right)
             if crossed:
                 virtual_horizon = Line(point[0], h, point[0], 0)
                 drawLine(crop_img, virtual_horizon, (255,0,0), "virtual")

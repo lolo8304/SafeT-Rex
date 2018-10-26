@@ -6,6 +6,23 @@ from math import atan
 from math import degrees
 from math import sqrt
 
+#Finds the intersection of two lines, or returns false.
+#The lines are defined by (o1, p1) and (o2, p2).
+def det(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]) #Typo was here
+
+    div = det(xdiff, ydiff)
+    if div == 0:
+       return False, None
+
+    d = (det(*line1), det(*line2))
+    x = det(d, xdiff) / div
+    y = det(d, ydiff) / div
+    return True, (x, y)
 
 class Line:
     """
@@ -85,7 +102,7 @@ class Line:
             return "y = x * "+str(self.slope)
 
     def printXD(self, text):
-        printXD(text," (x,y)=", self.x1, self.y1, " (x,y)=", self.x2, self.y2)
+        print(text," (x,y)=", self.x1, self.y1, " (x,y)=", self.x2, self.y2)
 
     def draw_filled_area(self, img, line, color=(127,255,0), thickness=3):
         (h, w) = img.shape[:2]
@@ -101,3 +118,15 @@ class Line:
         cv2.fillPoly(overlay, np.int_([points]), color)
         opacity = 0.4
         cv2.addWeighted(overlay, opacity, img, 1 - opacity, 0, img)
+
+
+    #Finds the intersection of two lines, or returns false.
+    #The lines are defined by (o1, p1) and (o2, p2).
+    def line_intersection(self, line2):
+        if (line2 is not None):
+            return line_intersection( ( (self.x1, self.y1), (self.x2, self.y2)), ((line2.x1, line2.y1), (line2.x2, line2.y2)) )
+        else:
+            return False, None
+
+
+

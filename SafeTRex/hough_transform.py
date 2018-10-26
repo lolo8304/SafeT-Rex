@@ -1,6 +1,3 @@
-#from picamera.array import PiRGBArray
-#from picamera import PiCamera
-
 import time
 import cv2
 import numpy as np
@@ -16,19 +13,19 @@ import os
 import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", required=False, type=bool, default=False,
-	help="debug mode")
+	help="debug mode - will show debug windows")
 ap.add_argument("-x", "--xdebug", required=False, type=bool, default=False,
-	help="X debug mode")
+	help="X debug mode - will show detailed information about lane detection")
 ap.add_argument("-r", "--recording", required=False, type=int, default=0,
-	help="number to write files accordinly")
+	help="number to write files accordinly - suffix to filename")
 ap.add_argument("-v", "--video", required=False, default=None,
-	help="video file name for running")
+	help="input video file name for running")
 ap.add_argument("-i", "--imagesFolder", required=False, default=None,
-	help="images directory and pattern to load")
+	help="input images directory and pattern to load")
 ap.add_argument("-p", "--imagesPattern", required=False, default=None,
-	help="images pattern of name to load")
+	help="images pattern of name to load e.g. central*")
 ap.add_argument("-c", "--config", required=False, default="axahack2018",
-	help="configuration pipeline name - default axahack2018")
+	help="configuration pipeline name - default axahack2018 - see hough_configuration.py")
 
 args = vars(ap.parse_args())
 
@@ -67,31 +64,31 @@ inputMode = None
 if (args["imagesFolder"]):
     inputMode = ImagesInput(args["imagesFolder"], args["imagesPattern"])
 else:
-    filename = "lane_recognition/data/test_videos/test-recording-1.h264"
+    filename = "lane_recognition/data/test_videos/demo-training-01.h264"
     if (args["video"] is not None):
         filename = args["video"]
     inputMode = VideoInput(filename)
 
-#camera = PiCamera()
-#camera.resolution = (320, 240)
-#camera.framerate = 16
-#rawCapture = PiRGBArray(camera, size=(320, 240))
+# global variable to record video to be able to release at end of program
 video = None
-
+# driver controls the car, here we need only simulation, no real calls to car happening
 driver = CarStateMachineClient(recording=args["recording"], init=0, simulate=True)
 
+# on exit handler at end of recording while stopping python program
 def releaseVideo(video):
     video.release()
 
+# initialize our pipeline configuration in file ./lane_recognition/hough_configuration.py
 pipeline = args["config"]
 image_config = configurations()[pipeline]
 
-
 while(True):
+    # recorded files from videos are written with 12 frames per second on pi
     time.sleep(1 / 12) # 12 frames / s
-    #image = frame.array
     image = inputMode.read()
     if (image is not None):
+
+        # if recording of video is switched on
         if args["recording"] > 0:
             if video is None:
                 name = "safet-rex-recording-"+str(args["recording"])+".h264"
@@ -111,5 +108,8 @@ while(True):
         #print("key=",key)
     if key == ord("q"):
         break
+
+    # check if key pressed fits to a pipeline image configuration 
+    # and will directly execute the needed command
     found, image_config = execute_pipeline_key(key, image_config)
 
