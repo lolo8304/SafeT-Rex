@@ -75,7 +75,7 @@ api.add_resource(Speed, '/speed/<speed>')
 api.add_resource(SpeedFactor, '/speedFactor/<speedFactor>')  
 api.add_resource(Steer, '/steer/<steer>')
 
-def startServer(sr: None):
+def startServer(sr=None):
     global eventStopper
     eventStopper = sr
     app.run(host= '0.0.0.0', port='5002')
