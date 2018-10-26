@@ -78,5 +78,6 @@ api.add_resource(Steer, '/steer/<steer>')
 def startServer(sr=None):
     global eventStopper
     eventStopper = sr
+    print("server is starting on port 5002")
     app.run(host= '0.0.0.0', port='5002')
 
