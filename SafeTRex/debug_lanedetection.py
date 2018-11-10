@@ -43,7 +43,7 @@ class VideoInput():
 
 class PiCamInput():
     def __init__(self):
-        self.__videoName = videoName
+        self.__videoName = "picam"
         self.__camera = PiCamera()
         self.__camera.resolution = (640, 480)
         self.__camera.framerate = 16
