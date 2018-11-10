@@ -45,9 +45,9 @@ class PiCamInput():
     def __init__(self):
         self.__videoName = "picam"
         self.__camera = PiCamera()
-        self.__camera.resolution = (640, 480)
+        self.__camera.resolution = (320, 240)
         self.__camera.framerate = 16
-        rawCapture = PiRGBArray(self.__camera, size=(640, 480))
+        rawCapture = PiRGBArray(self.__camera, size=(320, 240))
 
         # allow the camera to warmup
         time.sleep(0.1)
