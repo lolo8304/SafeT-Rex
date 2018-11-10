@@ -60,7 +60,6 @@ class PiCamInput():
             image2 = cv2.flip(image, flipCode=1)
             cv2.imshow("Frame", image2)
             print("get image from pi")
-            return image2
 
 
 
