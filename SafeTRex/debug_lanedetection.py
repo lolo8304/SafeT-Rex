@@ -50,15 +50,15 @@ class PiCamInput():
         self.__rawCapture = PiRGBArray(self.__camera, size=(320, 240))
 
         # allow the camera to warmup
-        time.sleep(0.1)
+        time.sleep(0.2)
 
     def read(self):
         for frame in self.__camera.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
             image = frame.array
-            image2 = cv2.flip(image, flipCode=1)
-            cv2.imshow("Frame", image2)
+            #image2 = cv2.flip(image, flipCode=1)
+            cv2.imshow("Frame", image)
             print("get image from pi")
 
 
