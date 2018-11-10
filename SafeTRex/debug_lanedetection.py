@@ -59,6 +59,8 @@ class PiCamInput():
             # and occupied/unoccupied text
             image = frame.array
             image2 = cv2.flip(image, flipCode=1)
+            cv2.imshow("Frame", image2)
+
             return image2
 
 
