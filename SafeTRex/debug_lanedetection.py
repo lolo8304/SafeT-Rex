@@ -47,14 +47,13 @@ class PiCamInput():
         self.__camera = PiCamera()
         self.__camera.resolution = (320, 240)
         #self.__camera.framerate = 16
-        rawCapture = PiRGBArray(self.__camera, size=(320, 240))
+        self.__rawCapture = PiRGBArray(self.__camera, size=(320, 240))
 
         # allow the camera to warmup
         time.sleep(0.1)
 
-        self.__videostream = self.__camera.capture_continuous(rawCapture, format="bgr", use_video_port=True)
     def read(self):
-        for frame in self.__videostream:
+        for frame in self.__camera.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
             image = frame.array
