@@ -54,6 +54,7 @@ class PiCamInput():
     def read(self):
         image = np.empty((240 * 320 * 3,), dtype=np.uint8)
         self.__camera.capture(image, 'bgr')
+        image = image.reshape((240, 320, 3))
         image2 = cv2.flip(image, flipCode=1)
         cv2.imshow("Frame", image2)
         print("get image from pi")
