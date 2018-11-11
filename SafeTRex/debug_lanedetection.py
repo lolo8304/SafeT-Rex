@@ -45,16 +45,16 @@ class PiCamInput():
     def __init__(self):
         self.__videoName = "picam"
         self.__camera = PiCamera()
-        self.__camera.resolution = (320, 240)
-        self.__camera.framerate = 24
+        self.__camera.resolution = (640, 480)
+        self.__camera.framerate = 32
 
         # allow the camera to warmup
         time.sleep(1.0)
 
     def read(self):
-        image = np.empty((240 * 320 * 3,), dtype=np.uint8)
+        image = np.empty((640 * 480 * 3,), dtype=np.uint8)
         self.__camera.capture(image, 'bgr')
-        image = image.reshape((240, 320, 3))
+        image = image.reshape((480, 640, 3))
         image2 = cv2.flip(image, flipCode=1)
         cv2.imshow("Frame", image2)
         print("get image from pi")
