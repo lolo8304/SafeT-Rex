@@ -34,9 +34,8 @@ class StreamingOutput(object):
             with self.condition:
                 self.frame = self.buffer.getvalue()
                 image = np.asarray(self.frame)
-                image2 = cv2.flip(image, flipCode=1)
-                cv2.imshow("Frame", image2)
                 self.condition.notify_all()
+                cv2.imshow("Frame", image)
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
