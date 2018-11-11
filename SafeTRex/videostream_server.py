@@ -26,6 +26,16 @@ class StreamingOutput(object):
         self.buffer = io.BytesIO()
         self.condition = Condition()
 
+    def showFrame(self):
+        # from https://picamera.readthedocs.io/en/release-1.6/recipes1.html#capturing-to-an-opencv-object
+        data = np.fromstring(self.frame, dtype=np.uint8)
+        # "Decode" the image from the array, preserving colour
+        image = cv2.imdecode(data, 1)
+        # OpenCV returns an array with data in BGR order. If you want RGB instead
+        # use the following...
+        image = image[:, :, ::-1]
+        cv2.imshow("Frame", image)
+
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
             # New frame, copy the existing buffer's content and notify all
@@ -33,9 +43,8 @@ class StreamingOutput(object):
             self.buffer.truncate()
             with self.condition:
                 self.frame = self.buffer.getvalue()
-                image = np.asarray(self.frame)
+                self.showFrame()
                 self.condition.notify_all()
-                cv2.imshow("Frame", image)
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
