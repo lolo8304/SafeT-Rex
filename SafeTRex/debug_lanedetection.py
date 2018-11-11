@@ -46,20 +46,18 @@ class PiCamInput():
         self.__videoName = "picam"
         self.__camera = PiCamera()
         self.__camera.resolution = (320, 240)
-        #self.__camera.framerate = 16
-        self.__rawCapture = PiRGBArray(self.__camera, size=(320, 240))
+        self.__camera.framerate = 24
 
         # allow the camera to warmup
-        time.sleep(0.2)
+        time.sleep(1.0)
 
     def read(self):
-        for frame in self.__camera.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
-            # grab the raw NumPy array representing the image, then initialize the timestamp
-            # and occupied/unoccupied text
-            image = frame.array
-            #image2 = cv2.flip(image, flipCode=1)
-            cv2.imshow("Frame", image)
-            print("get image from pi")
+        image = np.empty((240 * 320 * 3,), dtype=np.uint8)
+        camera.capture(image, 'bgr')
+        image2 = cv2.flip(image, flipCode=1)
+        cv2.imshow("Frame", image2)
+        print("get image from pi")
+        return image2
 
 
 
