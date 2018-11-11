@@ -4,6 +4,7 @@ import logging
 import socketserver
 from threading import Condition
 from http import server
+import cv2
 
 PAGE="""\
 <html>
@@ -31,7 +32,8 @@ class StreamingOutput(object):
             self.buffer.truncate()
             with self.condition:
                 self.frame = self.buffer.getvalue()
-                cv2.imshow("Frame", self.frame)
+                image2 = cv2.flip(self.frame, flipCode=1)
+                cv2.imshow("Frame", image2)
                 self.condition.notify_all()
             self.buffer.seek(0)
         return self.buffer.write(buf)
