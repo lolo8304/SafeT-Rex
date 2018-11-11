@@ -30,7 +30,7 @@ class StreamingOutput(object):
         # from https://picamera.readthedocs.io/en/release-1.6/recipes1.html#capturing-to-an-opencv-object
         data = np.fromstring(self.frame, dtype=np.uint8)
         # "Decode" the image from the array, preserving colour
-        image = cv2.imdecode(data, 1)
+        image = cv2.imdecode(data, cv2.CV_LOAD_IMAGE_COLOR)
         # OpenCV returns an array with data in BGR order. If you want RGB instead
         # use the following...
         image = image[:, :, ::-1]
@@ -95,6 +95,9 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     output = StreamingOutput()
     camera.start_recording(output, format='mjpeg')
+    image = np.empty((480 * 640 * 3,), dtype=np.uint8)
+    camera.capture(image, 'bgr')
+    image = image.reshape((480, 640, 3))
     try:
         address = ('', 8000)
         server = StreamingServer(address, StreamingHandler)
