@@ -32,9 +32,8 @@ class StreamingOutput(object):
             self.buffer.truncate()
             with self.condition:
                 self.frame = self.buffer.getvalue()
-                image2 = cv2.flip(self.frame, flipCode=1)
-                cv2.imshow("Frame", image2)
                 self.condition.notify_all()
+                cv2.imshow("Frame", self.frame)
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
