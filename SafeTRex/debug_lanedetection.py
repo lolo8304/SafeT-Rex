@@ -5,7 +5,6 @@ import math
 from lane_recognition.hough_transform_module import detect_lane
 from lane_recognition.hough_transform_module import execute_pipeline_key
 from lane_recognition.hough_configuration import configurations
-from videostream_server import *
 
 from car_client import CarStateMachineClient
 import atexit
