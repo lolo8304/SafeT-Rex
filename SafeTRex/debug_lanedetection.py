@@ -45,21 +45,45 @@ class PiCamInput():
     def __init__(self):
         self.__videoName = "picam"
         self.__camera = PiCamera()
-        self.__camera.resolution = (640, 480)
+        self.__dim = (640, 480)
+        self.__colordepth = 3
+        self.__camera.resolution = self.__dim
         self.__camera.framerate = 32
 
         # allow the camera to warmup
         time.sleep(1.0)
 
     def read(self):
-        image = np.empty((640 * 480 * 3,), dtype=np.uint8)
+        image = np.empty((self.__dim[0] * self.__dim[1] * self.__colordepth,), dtype=np.uint8)
         self.__camera.capture(image, 'bgr')
-        image = image.reshape((480, 640, 3))
+        image = image.reshape((self.__dim[1], self._dim[0], self.__colordepth))
         image2 = cv2.flip(image, flipCode=1)
         cv2.imshow("Frame", image2)
-        print("get image from pi")
         return image2
 
+
+class PiCamRawInput():
+    def __init__(self):
+        self.__videoName = "picam"
+        self.__camera = PiCamera()
+        self.__dim = (640, 480)
+        self.__colordepth = 3
+        self.__camera.resolution = self.__dim
+        self.__camera.framerate = 32
+        self.__rawCapture = PiRGBArray(self.__camera, size=self.__dim)
+
+        # allow the camera to warmup
+        time.sleep(1.0)
+
+    def read(self):
+        for frame in self.__camera.capture_continuous(self.__rawCapture, format="bgr", use_video_port=True):
+            # grab the raw NumPy array representing the image, then initialize the timestamp
+            # and occupied/unoccupied text
+            image = frame.array
+            image2 = cv2.flip(image, flipCode=1)
+            cv2.imshow("Frame", image2)
+            self.rawCapture.truncate(0)
+            return image2
 
 
 class ImagesInput():
@@ -89,7 +113,7 @@ else:
     if (args["video"] is not None):
         filename = args["video"]
         if filename == "picam":
-            inputMode = PiCamInput()
+            inputMode = PiCamRawInput()
         else:
             inputMode = VideoInput(filename)
     else:

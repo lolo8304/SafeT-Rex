@@ -118,7 +118,6 @@ class StreamReader:
             # grab the raw NumPy array representing the image, then initialize the timestamp
             # and occupied/unoccupied text
             self.currentimage = frame.array
-            print ("image=", self.currentimage)
             img = self.getCurrentImage()
             self.recordImage(img)
             if self.isDebug():
