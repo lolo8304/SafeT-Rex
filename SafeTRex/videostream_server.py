@@ -31,6 +31,7 @@ class StreamingOutput(object):
             self.buffer.truncate()
             with self.condition:
                 self.frame = self.buffer.getvalue()
+                cv2.imshow("Frame", self.frame)
                 self.condition.notify_all()
             self.buffer.seek(0)
         return self.buffer.write(buf)
