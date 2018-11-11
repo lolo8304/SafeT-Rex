@@ -82,7 +82,7 @@ class PiCamRawInput():
             image = frame.array
             image2 = cv2.flip(image, flipCode=1)
             cv2.imshow("Frame", image2)
-            self.rawCapture.truncate(0)
+            self.__rawCapture.truncate(0)
             return image2
 
 
