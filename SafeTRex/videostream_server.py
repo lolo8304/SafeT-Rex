@@ -30,7 +30,7 @@ class StreamingOutput(object):
         # from https://picamera.readthedocs.io/en/release-1.6/recipes1.html#capturing-to-an-opencv-object
         data = np.fromstring(self.frame, dtype=np.uint8)
         # "Decode" the image from the array, preserving colour
-        image = cv2.imdecode(data, cv2.CV_LOAD_IMAGE_COLOR)
+        image = cv2.imdecode(data)
         # OpenCV returns an array with data in BGR order. If you want RGB instead
         # use the following...
         image = image[:, :, ::-1]
