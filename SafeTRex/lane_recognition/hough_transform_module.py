@@ -755,6 +755,8 @@ def detect_lane(image, image_config, debugFlag = False, debugResult = False, xde
     sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
     time.sleep(0.02)
-    if isDebug() or isDebugResult():
+    if isDebug():
+        pipeline_show_thumb(pipeline_result)
+    if isDebugResult():
         pipeline_show_thumb(pipeline_result)
 
