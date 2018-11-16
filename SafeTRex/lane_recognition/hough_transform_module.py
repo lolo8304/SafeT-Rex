@@ -50,7 +50,7 @@ def setDebug(dFlag, resultFlag, xdFlag):
     debug = dFlag
     xdebug = xdFlag
     debugResult = resultFlag
-    print("debug flags: debug=", debug, " debug result=", debugResult, " xdebug=", xdebug)
+    print("debug flags: debug=", isDebug(), " debug result=", isDebugResult(), " xdebug=", isXDebug())
 
 def show_thumb(name, image, x_index, y_index):
     """show tumbnail on screen to debug image pipeline"""
