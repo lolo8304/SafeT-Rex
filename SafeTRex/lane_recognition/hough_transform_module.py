@@ -697,10 +697,10 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
         return crossed, directionString, angle100
     return crossed, None, None
 
-def detect_lane(image, image_config, debugFlag = False, resultDebug = False, xdebugFlag = False, driver = None):
+def detect_lane(image, image_config, debugFlag = False, debugResult = False, xdebugFlag = False, driver = None):
     global inc 
     
-    setDebug(debugFlag, resultDebug, xdebugFlag)
+    setDebug(debugFlag, debugResult, xdebugFlag)
     #printD("------------")
     pipeline_result, left, right = get_lane_lines(image, image_config)
     crop_img = pipeline_result["draw_image"]
