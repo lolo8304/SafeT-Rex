@@ -4,6 +4,8 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", required=False, type=bool, default=False,
 	help="debug mode")
+ap.add_argument("-e", "--debugResult", required=False, type=bool, default=False,
+	help="debug result screen only - show debug window")
 ap.add_argument("-x", "--xdebug", required=False, type=bool, default=False,
 	help="X debug mode")
 ap.add_argument("-r", "--recording", required=False, type=int, default=0,
