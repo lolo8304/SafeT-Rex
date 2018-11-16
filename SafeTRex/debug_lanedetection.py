@@ -60,7 +60,6 @@ class PiCamInput():
         self.__camera.capture(image, 'bgr')
         image = image.reshape((self.__dim[1], self._dim[0], self.__colordepth))
         image2 = cv2.flip(image, flipCode=1)
-        cv2.imshow("Frame", image2)
         return image2
 
 
