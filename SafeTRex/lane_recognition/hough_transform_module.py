@@ -295,7 +295,9 @@ def pipeline_process(image, image_config):
     return pipeline_result
 
 def pipeline_show_thumb(pipeline_result):
+    print("show thumbs")
     if (isDebugResult()):
+        print("show result")
         show_thumb("result image",pipeline_result["draw_image"], 0, 0)
     else:
         images = pipeline_result["images"]
