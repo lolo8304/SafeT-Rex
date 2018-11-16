@@ -137,10 +137,10 @@ class CarStateMachine():
         self.__state = ("RUN", tempo)
 
     def faster(self):
-        self.setRUN(self.getSpeed()+10)
+        self.setRUN(self.getSpeed()+5)
 
     def slower(self):
-        self.setRUN(self.getSpeed()-10)
+        self.setRUN(self.getSpeed()-5)
 
     def setSTOP(self):
         print("STOPSIGN!!!!")
