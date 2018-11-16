@@ -20,7 +20,7 @@ CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
 xdebug = False
-resultFlag = False
+debugResult = False
 startTime = time.time()
 isRaspi = os.uname()[4][:3] == "arm"
 
@@ -39,17 +39,17 @@ def isDebug():
     global debug
     return debug
 def isDebugResult():
-    global resultFlag
-    return resultFlag
+    global debugResult
+    return debugResult
 def isXDebug():
     global xdebug
     return xdebug
 
 def setDebug(dFlag, resultFlag, xdFlag):
-    global debug, xdebug, resultFlag
+    global debug, xdebug, debugResult
     debug = dFlag
     xdebug = xdFlag
-    resultFlag = resultFlag
+    debugResult = resultFlag
 
 def show_thumb(name, image, x_index, y_index):
     """show tumbnail on screen to debug image pipeline"""
