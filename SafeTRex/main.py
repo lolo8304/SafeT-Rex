@@ -54,6 +54,7 @@ class StreamReader:
     def __init__(self, carhandler, args):
         self.__carhandler = carhandler
         self.__debug = args["debug"]
+        self.__debugResult = args["debugResult"]
         self.__xdebug = args["xdebug"]
         self.__stopEvent = threading.Event()
         self.__recordingNo = args["recording"]
@@ -92,6 +93,8 @@ class StreamReader:
         return self.__debug
     def isXDebug(self):
         return self.__xdebug
+    def isDebugResult(self):
+        return self.__debugResult
 
     def recordingNo(self):
         return self.__recordingNo

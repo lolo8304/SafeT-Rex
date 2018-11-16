@@ -100,7 +100,7 @@ while(True):
                 atexit.register(releaseVideo, video)
             video.write(image)
 
-        detect_lane(image, image_config, args["debug"], args["xdebug"], driver)
+        detect_lane(image, image_config, args["debug"], args["debugResult"], args["xdebug"], driver)
 
     key = cv2.waitKey(1) & 0xFF
     if (key != 255):
