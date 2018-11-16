@@ -82,7 +82,6 @@ class PiCamRawInput():
             # and occupied/unoccupied text
             image = frame.array
             image2 = cv2.flip(image, flipCode=1)
-            cv2.imshow("Frame", image2)
             self.__rawCapture.truncate(0)
             return image2
 
