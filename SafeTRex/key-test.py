@@ -52,12 +52,13 @@ quit = "q"
 stopSpeed = ","
 radiusDemo = "r"
 kill = "!"
+setAngle = "f"
 
 driver = CarStateMachineClient(url=args["url"], recording=args["recording"], init=-1, simulate=False)
 
 if __name__ == '__main__':
   while(True):
-    key = waitForKey(keys="jlikmxyqse,r!")
+    key = waitForKey(keys="jlikmxyqse,r!f")
     if (key == left):
       driver.left()
     elif key == right:
@@ -83,6 +84,9 @@ if __name__ == '__main__':
       if (kill == "yes"):
         driver.kill()
 
+    elif key == setAngle:
+      angle = input("Enter your angle (-30 ... 30)? ")
+      driver.setAngle(int(angle))
 
     elif key == radiusDemo:
       driver.setRUN(0)

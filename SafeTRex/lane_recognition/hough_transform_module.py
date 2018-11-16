@@ -20,6 +20,7 @@ CARD_WRAP_SHORT_MAX = int(CARD_WRAP_LONG_MAX / CARD_LONG_2_SHORT_FACTOR)
 
 debug = False
 xdebug = False
+resultFlag = False
 startTime = time.time()
 isRaspi = os.uname()[4][:3] == "arm"
 
@@ -37,14 +38,18 @@ def printXD(*objects):
 def isDebug():
     global debug
     return debug
+def isDebugResult():
+    global resultFlag
+    return resultFlag
 def isXDebug():
     global xdebug
     return xdebug
 
-def setDebug(dFlag, xdFlag):
-    global debug, xdebug
+def setDebug(dFlag, resultFlag, xdFlag):
+    global debug, xdebug, resultFlag
     debug = dFlag
     xdebug = xdFlag
+    resultFlag = resultFlag
 
 def show_thumb(name, image, x_index, y_index):
     """show tumbnail on screen to debug image pipeline"""
@@ -285,16 +290,19 @@ def pipeline_process(image, image_config):
                 })
                 idx = idx + 1
     if not draw:
-        pipeline_result["draw"] = pipeline_result["image"]
+        pipeline_result["draw_image"] = pipeline_result["image"]
     pipeline_result["result_image"] = image
     return pipeline_result
 
 def pipeline_show_thumb(pipeline_result):
-    images = pipeline_result["images"]
-    idx = 0
-    for image in images:
-        show_thumb(image["title"],image["image"], idx % 2, idx // 2)
-        idx = idx + 1
+    if (isDebugResult()):
+        show_thumb("result image",pipeline_result["draw_image"], 0, 0)
+    else:
+        images = pipeline_result["images"]
+        idx = 0
+        for image in images:
+            show_thumb(image["title"],image["image"], idx % 2, idx // 2)
+            idx = idx + 1
 
 
 def execute_pipeline_key(key_in, image_config):
@@ -689,10 +697,10 @@ def calculate_steering_angle_from_double_line(crop_img, left, right):
         return crossed, directionString, angle100
     return crossed, None, None
 
-def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driver = None):
+def detect_lane(image, image_config, debugFlag = False, resultDebug = False, xdebugFlag = False, driver = None):
     global inc 
     
-    setDebug(debugFlag, xdebugFlag)
+    setDebug(debugFlag, resultDebug, xdebugFlag)
     #printD("------------")
     pipeline_result, left, right = get_lane_lines(image, image_config)
     crop_img = pipeline_result["draw_image"]
@@ -744,6 +752,6 @@ def detect_lane(image, image_config, debugFlag = False, xdebugFlag = False, driv
     sendIncrementToMotor(new_element[CONST_SMOOTH_DIR], new_element[CONST_SMOOTH_ANGLE], driver)
 
     time.sleep(0.02)
-    if isDebug():
+    if isDebug() or isDebugResult():
         pipeline_show_thumb(pipeline_result)
 
