@@ -107,6 +107,9 @@ class CarStateMachine():
     def getSpeed(self):
         return self.__state[1]
 
+    def noSpeedAdaption(self, newAngle):
+        return newAngle
+
     def speedAdaption(self, newAngle):
         if self.getSpeed() != 0:
             ## angles = (-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45)
@@ -153,7 +156,7 @@ class CarStateMachine():
 
     def setAngle(self, angle):
         angle = max(-30, min(angle, 30))
-        adaptSpeed = self.speedAdaption(angle)
+        adaptSpeed = self.noSpeedAdaption(angle)
         self.__stateAngle = ("ANGLE", angle)
         self._car.steer(angle)
         self.setRUN(self.getSpeed() + adaptSpeed)
