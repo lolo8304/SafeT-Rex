@@ -2,15 +2,47 @@ import os
 import pygame
 from math import tan, radians, degrees, copysign
 from pygame.math import Vector2
+
 from pygame import font as pygame_font
-from pygame import Surface
+from pygame import Surface, Rect
+
+class CarStructure:
+    def __init__(self, length, width, centralPoint, rear_axle_distance, front_axle_distance, tire_radius, tire_width):
+        self.H = length
+        self.length = length
+        self.L = self.H - rear_axle_distance - front_axle_distance
+        self.g2 = rear_axle_distance
+        self.g = front_axle_distance
+        self.T = tire_width
+        self.T2 = tire_radius * 2
+        self.W2 = width
+        self.W =  self.W2 - tire_width
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(current_dir, "car.png")
+        self.car_image = self.surface(pygame.image.load(image_path))
+        self.central_point = centralPoint
+        self.central_point_factor = Vector2(centralPoint.x / length, centralPoint.y / width)
+        print(self.central_point_factor)
+
+    # base simulation image reference: W=128, H=64, Length=4
+    def surface(self, image):
+        image_rect = image.get_rect()
+        len_factor = self.length / 4.0
+        hw_factor = 64.0 / 128.0
+        size_real_rect = Rect(0, 0, image_rect.w * len_factor, image_rect.w * len_factor * hw_factor)
+        return pygame.transform.smoothscale(image, (size_real_rect.w, size_real_rect.h))
+
+
+    def draw(self, central_point, angle, length):
+        pass
 
 class Car:
-    def __init__(self, x, y, angle=0.0, length=4, max_steering=30, max_acceleration=5.0):
+    def __init__(self, x, y, car_structure, angle=0.0, max_steering=30, max_acceleration=5.0):
+        self.structure = car_structure
         self.position = Vector2(x, y)
         self.velocity = Vector2(0.0, 0.0)
         self.angle = angle
-        self.length = length
+        self.length = self.structure.length
         self.max_acceleration = max_acceleration
         self.max_steering = max_steering
         self.max_velocity = 20
@@ -19,9 +51,7 @@ class Car:
         self.keep_speed = True
         self.angular_velocity = 0
 
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(current_dir, "car.png")
-        self.car_image = pygame.image.load(image_path)
+        self.car_image = self.structure.car_image
 
         self.acceleration = 0.0
         self.steering = 0.0
@@ -32,10 +62,11 @@ class Car:
         self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
 
         if self.steering:
-            turning_radius = self.length / tan(radians(self.steering))
-            self.angular_velocity = self.velocity.x / turning_radius
+            self.turning_radius = self.length / tan(radians(self.steering))
+            self.angular_velocity = self.velocity.x / self.turning_radius
         else:
             self.angular_velocity = 0
+            self.turning_radius = 0
 
         self.position += self.velocity.rotate(-self.angle) * dt
         self.angle += degrees(self.angular_velocity) * dt
@@ -93,18 +124,26 @@ class Car:
     def straight(self, dt):
         self.steering = 0
 
-    def draw1(self, surface, ppu):
+    def draw0(self, surface, ppu):
         rotated = pygame.transform.rotate(self.car_image, self.angle)
+        rotate = self.structure.central_point.rotate(self.angle)
         rect = rotated.get_rect()
-        surface.blit(rotated, self.position * ppu - (rect.width / 2, rect.height / 2))
 
-    def draw(self, surface, ppu):
+        self.addpath(self.position * ppu)
+        surface.blit(rotated, self.position * ppu - (rect.w / 2, rect.h / 2))
+        #self.addpath(self.position * ppu)
+        #surface.blit(rotated, self.position * ppu - (rotate.x, rotate.y))
+
+    def draw1(self, surface, ppu):
         image = self.car_image.copy()
         pygame.draw.rect(image, (255,0,0), image.get_rect(), 1)
+
         rotated = pygame.transform.rotate(image, self.angle)
+        rotate = self.structure.central_point.rotate(self.angle)
         rect = rotated.get_rect()
-        self.addpath(self.position * 1)
-        surface.blit(rotated, self.position * ppu - (rect.width / 2, rect.height / 2))
+        self.addpath(self.position * ppu)
+        factor = self.structure.central_point_factor
+        surface.blit(rotated, self.position * ppu - (rotate.x * ppu, rotate.y * ppu))
     
     def addpath(self, pos):
         if (len(self.center_path) > 0):
@@ -119,14 +158,14 @@ class Car:
 
     def draw_center_path(self, surface, ppu):
         for pos in self.center_path:
-            pygame.draw.circle(surface, (255,0,0), (int(pos.x * ppu), int(pos.y * ppu)), 1, 1)
+            pygame.draw.circle(surface, (255,0,0), (int(pos.x), int(pos.y)), 1, 1)
 
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Car tutorial")
-        width = 1280
+        width = 640 * 3 // 2
         height = 720
         self.screen = pygame.display.set_mode((width, height))
         self.f = pygame_font.SysFont("consolas", 20)
@@ -150,16 +189,18 @@ class Game:
     def show_dashboard(self, car):
         offset = 0
         offset = self.show_dashboardentry_str("position", str(car.position), offset)
+        offset = self.show_dashboardentry_number("size", car.angular_velocity, offset)
         offset = self.show_dashboardentry_number("steering", car.steering, offset)
         offset = self.show_dashboardentry_number("acceleration", car.acceleration, offset)
         offset = self.show_dashboardentry_number("velocity", car.velocity.x, offset)
         offset = self.show_dashboardentry_number("angle", car.angle, offset)
         offset = self.show_dashboardentry_number("angular velocity", car.angular_velocity, offset)
+        offset = self.show_dashboardentry_number("turning radius", car.turning_radius, offset)
 
 
     def run(self):
-
-        car = Car(10.0,10.0)
+        car_structure = CarStructure(4, 2, Vector2(2,1), 0, 0, 0, 0)
+        car = Car(10.0,10.0, car_structure)
         ppu = 32
 
         while not self.exit:
@@ -190,7 +231,8 @@ class Game:
             elif pressed[pygame.K_LEFT]:
                 car.left(dt)
             else:
-                car.straight(dt)
+                pass
+                #car.straight(dt)
 
             # Logic
             car.update(dt)
@@ -198,7 +240,8 @@ class Game:
             # Drawing
             self.screen.fill((0, 0, 0))
             self.show_dashboard(car)
-            car.draw(self.screen, ppu)
+            #car.draw(self.screen, ppu)
+            car.draw1(self.screen, ppu)
             car.draw_center_path(self.screen, ppu)
 
             pygame.display.flip()
