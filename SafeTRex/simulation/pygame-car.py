@@ -124,7 +124,7 @@ class Car:
     def straight(self, dt):
         self.steering = 0
 
-    def draw0(self, surface, ppu):
+    def draw1(self, surface, ppu):
         rotated = pygame.transform.rotate(self.car_image, self.angle)
         rotate = self.structure.central_point.rotate(self.angle)
         rect = rotated.get_rect()
@@ -134,7 +134,7 @@ class Car:
         #self.addpath(self.position * ppu)
         #surface.blit(rotated, self.position * ppu - (rotate.x, rotate.y))
 
-    def draw1(self, surface, ppu):
+    def draw0(self, surface, ppu):
         image = self.car_image.copy()
         pygame.draw.rect(image, (255,0,0), image.get_rect(), 1)
 
